@@ -7,7 +7,7 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
     rules: {
-      quotes: ['error', 'single', { avoidEscape: true }],
+      quotes: ['error', 'single'],
     },
   },
-])
+]);
