@@ -1,0 +1,16 @@
+---
+description: Rules
+alwaysApply: true
+---
+
+1. Use yarn always for all package management tasks (install, add, remove, etc.)
+
+2. Never deviate from code standards, always check to see if there is a reference for how to do something in the codebase before implementing
+
+3. Follow existing code patterns and conventions found in the project
+
+4. When in doubt, search the codebase for similar implementations before creating new code
+
+5. Maintain consistency with existing file structure and naming conventions
+
+6. Always run linting and formatting checks before committing code
