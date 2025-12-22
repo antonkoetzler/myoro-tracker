@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 export const unstable_settings = {
-  anchor: 'home',
+  anchor: 'login',
 };
 
 export default function RootLayout() {
@@ -20,6 +20,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name='login' options={{ headerShown: false }} />
         <Stack.Screen name='home' options={{ headerShown: false }} />
       </Stack>
       <StatusBar style={isDark ? 'light' : 'dark'} />
