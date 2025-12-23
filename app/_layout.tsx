@@ -1,4 +1,5 @@
 import '../tamagui-web.css';
+import '../tamagui.config';
 import '../lib/i18n';
 
 import { useEffect, useState } from 'react';
@@ -62,11 +63,13 @@ export default function RootLayout() {
   const checkAuth = async () => {
     const {
       data: { user },
+      // @ts-expect-error - Proxy preserves runtime types but TypeScript can't infer them
     } = await supabase.auth.getUser();
     setUserId(user?.id || null);
   };
 
   const setupAuthListener = () => {
+    // @ts-expect-error - Proxy preserves runtime types but TypeScript can't infer them
     supabase.auth.onAuthStateChange((_event, session) => {
       setUserId(session?.user?.id || null);
     });

@@ -25,6 +25,7 @@
     "@tamagui/config": "^1.141.5",
     "@tamagui/lucide-icons": "^1.141.5",
     "@tamagui/toast": "^1.141.5",
+    "@tamagui/web": "^1.141.5",
     "babel-preset-expo": "~54.0.9",
     "burnt": "^0.12.2",
     "expo": "~54.0.30",

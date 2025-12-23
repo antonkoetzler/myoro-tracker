@@ -1,10 +1,13 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from 'tamagui';
+import { Stack } from 'expo-router';
 
-export default function HomeLayout() {
+export default function AuthLayout() {
   return (
-    <SafeAreaView>
-      <Button>Hello</Button>
-    </SafeAreaView>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="index" />
+    </Stack>
   );
 }
