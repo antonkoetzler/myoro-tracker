@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Witamy",
+      "signInWithGoogle": "Zaloguj się przez Google",
+      "signInWithApple": "Zaloguj się przez Apple",
+      "signInWithGitHub": "Zaloguj się przez GitHub",
+      "continueWithoutSignIn": "Kontynuuj bez logowania"
+    },
+    "home": {
+      "title": "Moje Śledziki",
+      "noTrackers": "Brak śledzików",
+      "createTracker": "Utwórz Śledzik",
+      "trackerLimit": "Osiągnięto limit śledzików",
+      "freeLimit": "Darmowi użytkownicy mogą utworzyć do 10 śledzików"
+    },
+    "details": {
+      "name": "Nazwa",
+      "description": "Opis",
+      "timeSinceCreated": "Czas od utworzenia",
+      "timeSinceRestart": "Czas od ponownego uruchomienia",
+      "restartCount": "Liczba ponownych uruchomień",
+      "restartTracker": "Uruchom ponownie Śledzik",
+      "observations": "Obserwacje",
+      "addObservation": "Dodaj Obserwację",
+      "noObservations": "Brak obserwacji",
+      "premiumRequired": "Wymagane Premium"
+    },
+    "settings": {
+      "title": "Ustawienia",
+      "account": "Konto",
+      "cloudStorage": "Magazyn w Chmurze",
+      "cloudStorageDescription": "Synchronizuj swoje śledziki między urządzeniami",
+      "enableCloudStorage": "Włącz Magazyn w Chmurze",
+      "disableCloudStorage": "Wyłącz Magazyn w Chmurze",
+      "offloadData": "Przenieś dane na urządzenie",
+      "deleteCloudData": "Usuń dane z chmury",
+      "premium": "Premium",
+      "premiumDescription": "Odblokuj nieograniczone śledziki, magazyn w chmurze i więcej",
+      "subscribe": "Subskrybuj za $3/miesiąc",
+      "theme": "Motyw",
+      "language": "Język"
+    }
+  },
+  "common": {
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "logout": "Wyloguj",
+    "dark": "Ciemny",
+    "light": "Jasny"
+  }
+}
+

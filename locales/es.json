@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Bienvenido",
+      "signInWithGoogle": "Iniciar sesión con Google",
+      "signInWithApple": "Iniciar sesión con Apple",
+      "signInWithGitHub": "Iniciar sesión con GitHub",
+      "continueWithoutSignIn": "Continuar sin iniciar sesión"
+    },
+    "home": {
+      "title": "Mis Seguimientos",
+      "noTrackers": "Aún no hay seguimientos",
+      "createTracker": "Crear Seguimiento",
+      "trackerLimit": "Límite de seguimientos alcanzado",
+      "freeLimit": "Los usuarios gratuitos pueden crear hasta 10 seguimientos"
+    },
+    "details": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "timeSinceCreated": "Tiempo desde la creación",
+      "timeSinceRestart": "Tiempo desde el reinicio",
+      "restartCount": "Contador de reinicios",
+      "restartTracker": "Reiniciar Seguimiento",
+      "observations": "Observaciones",
+      "addObservation": "Agregar Observación",
+      "noObservations": "Aún no hay observaciones",
+      "premiumRequired": "Premium requerido"
+    },
+    "settings": {
+      "title": "Configuración",
+      "account": "Cuenta",
+      "cloudStorage": "Almacenamiento en la Nube",
+      "cloudStorageDescription": "Sincroniza tus seguimientos entre dispositivos",
+      "enableCloudStorage": "Habilitar Almacenamiento en la Nube",
+      "disableCloudStorage": "Deshabilitar Almacenamiento en la Nube",
+      "offloadData": "Transferir datos al dispositivo",
+      "deleteCloudData": "Eliminar datos de la nube",
+      "premium": "Premium",
+      "premiumDescription": "Desbloquea seguimientos ilimitados, almacenamiento en la nube y más",
+      "subscribe": "Suscribirse por $3/mes",
+      "theme": "Tema",
+      "language": "Idioma"
+    }
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "logout": "Cerrar sesión",
+    "dark": "Oscuro",
+    "light": "Claro"
+  }
+}
+

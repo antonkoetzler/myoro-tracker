@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Benvenuto",
+      "signInWithGoogle": "Accedi con Google",
+      "signInWithApple": "Accedi con Apple",
+      "signInWithGitHub": "Accedi con GitHub",
+      "continueWithoutSignIn": "Continua senza accedere"
+    },
+    "home": {
+      "title": "I Miei Tracker",
+      "noTrackers": "Nessun tracker ancora",
+      "createTracker": "Crea Tracker",
+      "trackerLimit": "Limite tracker raggiunto",
+      "freeLimit": "Gli utenti gratuiti possono creare fino a 10 tracker"
+    },
+    "details": {
+      "name": "Nome",
+      "description": "Descrizione",
+      "timeSinceCreated": "Tempo dalla creazione",
+      "timeSinceRestart": "Tempo dal riavvio",
+      "restartCount": "Conteggio riavvii",
+      "restartTracker": "Riavvia Tracker",
+      "observations": "Osservazioni",
+      "addObservation": "Aggiungi Osservazione",
+      "noObservations": "Nessuna osservazione ancora",
+      "premiumRequired": "Premium richiesto"
+    },
+    "settings": {
+      "title": "Impostazioni",
+      "account": "Account",
+      "cloudStorage": "Archiviazione Cloud",
+      "cloudStorageDescription": "Sincronizza i tuoi tracker tra dispositivi",
+      "enableCloudStorage": "Abilita Archiviazione Cloud",
+      "disableCloudStorage": "Disabilita Archiviazione Cloud",
+      "offloadData": "Trasferisci dati sul dispositivo",
+      "deleteCloudData": "Elimina dati cloud",
+      "premium": "Premium",
+      "premiumDescription": "Sblocca tracker illimitati, archiviazione cloud e altro",
+      "subscribe": "Abbonati per 3 $/mese",
+      "theme": "Tema",
+      "language": "Lingua"
+    }
+  },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "logout": "Esci",
+    "dark": "Scuro",
+    "light": "Chiaro"
+  }
+}
+

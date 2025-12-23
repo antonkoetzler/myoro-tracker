@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Добро пожаловать",
+      "signInWithGoogle": "Войти через Google",
+      "signInWithApple": "Войти через Apple",
+      "signInWithGitHub": "Войти через GitHub",
+      "continueWithoutSignIn": "Продолжить без входа"
+    },
+    "home": {
+      "title": "Мои Трекеры",
+      "noTrackers": "Пока нет трекеров",
+      "createTracker": "Создать Трекер",
+      "trackerLimit": "Достигнут лимит трекеров",
+      "freeLimit": "Бесплатные пользователи могут создать до 10 трекеров"
+    },
+    "details": {
+      "name": "Название",
+      "description": "Описание",
+      "timeSinceCreated": "Время с момента создания",
+      "timeSinceRestart": "Время с момента перезапуска",
+      "restartCount": "Количество перезапусков",
+      "restartTracker": "Перезапустить Трекер",
+      "observations": "Наблюдения",
+      "addObservation": "Добавить Наблюдение",
+      "noObservations": "Пока нет наблюдений",
+      "premiumRequired": "Требуется Premium"
+    },
+    "settings": {
+      "title": "Настройки",
+      "account": "Аккаунт",
+      "cloudStorage": "Облачное хранилище",
+      "cloudStorageDescription": "Синхронизируйте свои трекеры между устройствами",
+      "enableCloudStorage": "Включить облачное хранилище",
+      "disableCloudStorage": "Отключить облачное хранилище",
+      "offloadData": "Перенести данные на устройство",
+      "deleteCloudData": "Удалить облачные данные",
+      "premium": "Premium",
+      "premiumDescription": "Разблокируйте неограниченные трекеры, облачное хранилище и многое другое",
+      "subscribe": "Подписаться за $3/месяц",
+      "theme": "Тема",
+      "language": "Язык"
+    }
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "logout": "Выйти",
+    "dark": "Темная",
+    "light": "Светлая"
+  }
+}
+

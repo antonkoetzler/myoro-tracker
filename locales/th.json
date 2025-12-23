@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "ยินดีต้อนรับ",
+      "signInWithGoogle": "เข้าสู่ระบบด้วย Google",
+      "signInWithApple": "เข้าสู่ระบบด้วย Apple",
+      "signInWithGitHub": "เข้าสู่ระบบด้วย GitHub",
+      "continueWithoutSignIn": "ดำเนินการต่อโดยไม่เข้าสู่ระบบ"
+    },
+    "home": {
+      "title": "ตัวติดตามของฉัน",
+      "noTrackers": "ยังไม่มีตัวติดตาม",
+      "createTracker": "สร้างตัวติดตาม",
+      "trackerLimit": "ถึงขีดจำกัดตัวติดตามแล้ว",
+      "freeLimit": "ผู้ใช้ฟรีสามารถสร้างตัวติดตามได้สูงสุด 10 ตัว"
+    },
+    "details": {
+      "name": "ชื่อ",
+      "description": "คำอธิบาย",
+      "timeSinceCreated": "เวลาตั้งแต่สร้าง",
+      "timeSinceRestart": "เวลาตั้งแต่รีสตาร์ท",
+      "restartCount": "จำนวนครั้งที่รีสตาร์ท",
+      "restartTracker": "รีสตาร์ทตัวติดตาม",
+      "observations": "การสังเกต",
+      "addObservation": "เพิ่มการสังเกต",
+      "noObservations": "ยังไม่มีการสังเกต",
+      "premiumRequired": "ต้องใช้ Premium"
+    },
+    "settings": {
+      "title": "การตั้งค่า",
+      "account": "บัญชี",
+      "cloudStorage": "คลาวด์ส토เรจ",
+      "cloudStorageDescription": "ซิงค์ตัวติดตามของคุณระหว่างอุปกรณ์",
+      "enableCloudStorage": "เปิดใช้งานคลาวด์ส토เรจ",
+      "disableCloudStorage": "ปิดใช้งานคลาวด์ส토เรจ",
+      "offloadData": "โอนข้อมูลไปยังอุปกรณ์",
+      "deleteCloudData": "ลบข้อมูลคลาวด์",
+      "premium": "Premium",
+      "premiumDescription": "ปลดล็อกตัวติดตามไม่จำกัด คลาวด์ส토เรจ และอื่นๆ",
+      "subscribe": "สมัครสมาชิก $3/เดือน",
+      "theme": "ธีม",
+      "language": "ภาษา"
+    }
+  },
+  "common": {
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "logout": "ออกจากระบบ",
+    "dark": "มืด",
+    "light": "สว่าง"
+  }
+}
+

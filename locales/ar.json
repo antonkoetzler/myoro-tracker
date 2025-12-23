@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "مرحباً",
+      "signInWithGoogle": "تسجيل الدخول باستخدام Google",
+      "signInWithApple": "تسجيل الدخول باستخدام Apple",
+      "signInWithGitHub": "تسجيل الدخول باستخدام GitHub",
+      "continueWithoutSignIn": "المتابعة دون تسجيل الدخول"
+    },
+    "home": {
+      "title": "متتبعاتي",
+      "noTrackers": "لا توجد متتبعات بعد",
+      "createTracker": "إنشاء متتبع",
+      "trackerLimit": "تم الوصول إلى حد المتتبع",
+      "freeLimit": "يمكن للمستخدمين المجانيين إنشاء ما يصل إلى 10 متتبعات"
+    },
+    "details": {
+      "name": "الاسم",
+      "description": "الوصف",
+      "timeSinceCreated": "الوقت منذ الإنشاء",
+      "timeSinceRestart": "الوقت منذ إعادة التشغيل",
+      "restartCount": "عدد إعادة التشغيل",
+      "restartTracker": "إعادة تشغيل المتتبع",
+      "observations": "الملاحظات",
+      "addObservation": "إضافة ملاحظة",
+      "noObservations": "لا توجد ملاحظات بعد",
+      "premiumRequired": "يتطلب Premium"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "account": "الحساب",
+      "cloudStorage": "التخزين السحابي",
+      "cloudStorageDescription": "مزامنة متتبعاتك بين الأجهزة",
+      "enableCloudStorage": "تفعيل التخزين السحابي",
+      "disableCloudStorage": "تعطيل التخزين السحابي",
+      "offloadData": "نقل البيانات إلى الجهاز",
+      "deleteCloudData": "حذف البيانات السحابية",
+      "premium": "Premium",
+      "premiumDescription": "فتح متتبعات غير محدودة والتخزين السحابي والمزيد",
+      "subscribe": "الاشتراك مقابل $3/شهر",
+      "theme": "المظهر",
+      "language": "اللغة"
+    }
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "logout": "تسجيل الخروج",
+    "dark": "داكن",
+    "light": "فاتح"
+  }
+}
+

@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Welkom",
+      "signInWithGoogle": "Inloggen met Google",
+      "signInWithApple": "Inloggen met Apple",
+      "signInWithGitHub": "Inloggen met GitHub",
+      "continueWithoutSignIn": "Doorgaan zonder in te loggen"
+    },
+    "home": {
+      "title": "Mijn Trackers",
+      "noTrackers": "Nog geen trackers",
+      "createTracker": "Tracker Maken",
+      "trackerLimit": "Trackerlimiet bereikt",
+      "freeLimit": "Gratis gebruikers kunnen maximaal 10 trackers maken"
+    },
+    "details": {
+      "name": "Naam",
+      "description": "Beschrijving",
+      "timeSinceCreated": "Tijd sinds aanmaak",
+      "timeSinceRestart": "Tijd sinds herstart",
+      "restartCount": "Aantal herstarts",
+      "restartTracker": "Tracker Herstarten",
+      "observations": "Waarnemingen",
+      "addObservation": "Waarneming Toevoegen",
+      "noObservations": "Nog geen waarnemingen",
+      "premiumRequired": "Premium vereist"
+    },
+    "settings": {
+      "title": "Instellingen",
+      "account": "Account",
+      "cloudStorage": "Cloudopslag",
+      "cloudStorageDescription": "Synchroniseer je trackers tussen apparaten",
+      "enableCloudStorage": "Cloudopslag Inschakelen",
+      "disableCloudStorage": "Cloudopslag Uitschakelen",
+      "offloadData": "Gegevens naar apparaat overbrengen",
+      "deleteCloudData": "Cloudgegevens verwijderen",
+      "premium": "Premium",
+      "premiumDescription": "Ontgrendel onbeperkte trackers, cloudopslag en meer",
+      "subscribe": "Abonneren voor $3/maand",
+      "theme": "Thema",
+      "language": "Taal"
+    }
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "logout": "Uitloggen",
+    "dark": "Donker",
+    "light": "Licht"
+  }
+}
+

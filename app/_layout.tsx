@@ -1,6 +1,7 @@
 import '../tamagui-web.css';
+import '../lib/i18n';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -11,6 +12,9 @@ import {
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { Provider } from 'components/Provider';
+import { supabase } from '../lib/supabase';
+import * as database from '../lib/database';
+import { syncToCloud, syncFromCloud, setupRealtimeListeners } from '../lib/sync';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -18,7 +22,7 @@ export {
 } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: 'auth',
+  initialRouteName: 'home',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -33,8 +37,49 @@ export default function RootLayout() {
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
+  const [userId, setUserId] = useState<string | null>(null);
 
   const isDark = colorScheme === 'dark';
+
+  useEffect(() => {
+    database.initDatabase();
+    checkAuth();
+    setupAuthListener();
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      initializeSync();
+    }
+  }, [userId]);
+
+  const checkAuth = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    setUserId(user?.id || null);
+  };
+
+  const setupAuthListener = () => {
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id || null);
+    });
+  };
+
+  const initializeSync = async () => {
+    try {
+      const prefs = await database.getUserPreferences(userId);
+      if (prefs.cloud_enabled) {
+        await syncToCloud(userId);
+        await syncFromCloud(userId);
+        setupRealtimeListeners(userId, () => {
+          // Refresh data when sync updates occur
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing sync:', error);
+    }
+  };
 
   useEffect(() => {
     if (interLoaded || interError) {
@@ -58,6 +103,12 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name='home'
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name='settings'
               options={{
                 headerShown: false,
               }}

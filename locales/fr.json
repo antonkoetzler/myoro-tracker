@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Bienvenue",
+      "signInWithGoogle": "Se connecter avec Google",
+      "signInWithApple": "Se connecter avec Apple",
+      "signInWithGitHub": "Se connecter avec GitHub",
+      "continueWithoutSignIn": "Continuer sans se connecter"
+    },
+    "home": {
+      "title": "Mes Suivis",
+      "noTrackers": "Aucun suivi pour le moment",
+      "createTracker": "Créer un Suivi",
+      "trackerLimit": "Limite de suivis atteinte",
+      "freeLimit": "Les utilisateurs gratuits peuvent créer jusqu'à 10 suivis"
+    },
+    "details": {
+      "name": "Nom",
+      "description": "Description",
+      "timeSinceCreated": "Temps depuis la création",
+      "timeSinceRestart": "Temps depuis le redémarrage",
+      "restartCount": "Nombre de redémarrages",
+      "restartTracker": "Redémarrer le Suivi",
+      "observations": "Observations",
+      "addObservation": "Ajouter une Observation",
+      "noObservations": "Aucune observation pour le moment",
+      "premiumRequired": "Premium requis"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "account": "Compte",
+      "cloudStorage": "Stockage Cloud",
+      "cloudStorageDescription": "Synchronisez vos suivis entre appareils",
+      "enableCloudStorage": "Activer le Stockage Cloud",
+      "disableCloudStorage": "Désactiver le Stockage Cloud",
+      "offloadData": "Transférer les données vers l'appareil",
+      "deleteCloudData": "Supprimer les données cloud",
+      "premium": "Premium",
+      "premiumDescription": "Débloquez des suivis illimités, le stockage cloud et plus encore",
+      "subscribe": "S'abonner pour 3 $/mois",
+      "theme": "Thème",
+      "language": "Langue"
+    }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "logout": "Déconnexion",
+    "dark": "Sombre",
+    "light": "Clair"
+  }
+}
+

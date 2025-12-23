@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Welcome",
+      "signInWithGoogle": "Sign in with Google",
+      "signInWithApple": "Sign in with Apple",
+      "signInWithGitHub": "Sign in with GitHub",
+      "continueWithoutSignIn": "Continue without signing in"
+    },
+    "home": {
+      "title": "My Trackers",
+      "noTrackers": "No trackers yet",
+      "createTracker": "Create Tracker",
+      "trackerLimit": "Tracker limit reached",
+      "freeLimit": "Free users can create up to 10 trackers"
+    },
+    "details": {
+      "name": "Name",
+      "description": "Description",
+      "timeSinceCreated": "Time since created",
+      "timeSinceRestart": "Time since restart",
+      "restartCount": "Restart count",
+      "restartTracker": "Restart Tracker",
+      "observations": "Observations",
+      "addObservation": "Add Observation",
+      "noObservations": "No observations yet",
+      "premiumRequired": "Premium required"
+    },
+    "settings": {
+      "title": "Settings",
+      "account": "Account",
+      "cloudStorage": "Cloud Storage",
+      "cloudStorageDescription": "Sync your trackers across devices",
+      "enableCloudStorage": "Enable Cloud Storage",
+      "disableCloudStorage": "Disable Cloud Storage",
+      "offloadData": "Offload data to device",
+      "deleteCloudData": "Delete cloud data",
+      "premium": "Premium",
+      "premiumDescription": "Unlock unlimited trackers, cloud storage, and more",
+      "subscribe": "Subscribe for $3/month",
+      "theme": "Theme",
+      "language": "Language"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "logout": "Logout",
+    "dark": "Dark",
+    "light": "Light"
+  }
+}
+

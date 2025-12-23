@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Willkommen",
+      "signInWithGoogle": "Mit Google anmelden",
+      "signInWithApple": "Mit Apple anmelden",
+      "signInWithGitHub": "Mit GitHub anmelden",
+      "continueWithoutSignIn": "Ohne Anmeldung fortfahren"
+    },
+    "home": {
+      "title": "Meine Tracker",
+      "noTrackers": "Noch keine Tracker",
+      "createTracker": "Tracker erstellen",
+      "trackerLimit": "Tracker-Limit erreicht",
+      "freeLimit": "Kostenlose Benutzer können bis zu 10 Tracker erstellen"
+    },
+    "details": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "timeSinceCreated": "Zeit seit der Erstellung",
+      "timeSinceRestart": "Zeit seit dem Neustart",
+      "restartCount": "Anzahl der Neustarts",
+      "restartTracker": "Tracker neu starten",
+      "observations": "Beobachtungen",
+      "addObservation": "Beobachtung hinzufügen",
+      "noObservations": "Noch keine Beobachtungen",
+      "premiumRequired": "Premium erforderlich"
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "account": "Konto",
+      "cloudStorage": "Cloud-Speicher",
+      "cloudStorageDescription": "Synchronisieren Sie Ihre Tracker zwischen Geräten",
+      "enableCloudStorage": "Cloud-Speicher aktivieren",
+      "disableCloudStorage": "Cloud-Speicher deaktivieren",
+      "offloadData": "Daten auf Gerät übertragen",
+      "deleteCloudData": "Cloud-Daten löschen",
+      "premium": "Premium",
+      "premiumDescription": "Entsperren Sie unbegrenzte Tracker, Cloud-Speicher und mehr",
+      "subscribe": "Für 3 $/Monat abonnieren",
+      "theme": "Design",
+      "language": "Sprache"
+    }
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "logout": "Abmelden",
+    "dark": "Dunkel",
+    "light": "Hell"
+  }
+}
+

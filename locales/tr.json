@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Hoş geldiniz",
+      "signInWithGoogle": "Google ile giriş yap",
+      "signInWithApple": "Apple ile giriş yap",
+      "signInWithGitHub": "GitHub ile giriş yap",
+      "continueWithoutSignIn": "Giriş yapmadan devam et"
+    },
+    "home": {
+      "title": "Takipçilerim",
+      "noTrackers": "Henüz takipçi yok",
+      "createTracker": "Takipçi Oluştur",
+      "trackerLimit": "Takipçi limitine ulaşıldı",
+      "freeLimit": "Ücretsiz kullanıcılar en fazla 10 takipçi oluşturabilir"
+    },
+    "details": {
+      "name": "Ad",
+      "description": "Açıklama",
+      "timeSinceCreated": "Oluşturulduğundan beri geçen süre",
+      "timeSinceRestart": "Yeniden başlatıldığından beri geçen süre",
+      "restartCount": "Yeniden başlatma sayısı",
+      "restartTracker": "Takipçiyi Yeniden Başlat",
+      "observations": "Gözlemler",
+      "addObservation": "Gözlem Ekle",
+      "noObservations": "Henüz gözlem yok",
+      "premiumRequired": "Premium gerekli"
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "account": "Hesap",
+      "cloudStorage": "Bulut Depolama",
+      "cloudStorageDescription": "Takipçilerinizi cihazlar arasında senkronize edin",
+      "enableCloudStorage": "Bulut Depolamayı Etkinleştir",
+      "disableCloudStorage": "Bulut Depolamayı Devre Dışı Bırak",
+      "offloadData": "Verileri cihaza aktar",
+      "deleteCloudData": "Bulut verilerini sil",
+      "premium": "Premium",
+      "premiumDescription": "Sınırsız takipçi, bulut depolama ve daha fazlasının kilidini açın",
+      "subscribe": "$3/ay abone ol",
+      "theme": "Tema",
+      "language": "Dil"
+    }
+  },
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "logout": "Çıkış Yap",
+    "dark": "Koyu",
+    "light": "Açık"
+  }
+}
+

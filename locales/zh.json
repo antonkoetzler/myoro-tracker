@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "欢迎",
+      "signInWithGoogle": "使用 Google 登录",
+      "signInWithApple": "使用 Apple 登录",
+      "signInWithGitHub": "使用 GitHub 登录",
+      "continueWithoutSignIn": "不登录继续"
+    },
+    "home": {
+      "title": "我的追踪器",
+      "noTrackers": "还没有追踪器",
+      "createTracker": "创建追踪器",
+      "trackerLimit": "已达到追踪器限制",
+      "freeLimit": "免费用户最多可创建 10 个追踪器"
+    },
+    "details": {
+      "name": "名称",
+      "description": "描述",
+      "timeSinceCreated": "创建后时间",
+      "timeSinceRestart": "重启后时间",
+      "restartCount": "重启次数",
+      "restartTracker": "重启追踪器",
+      "observations": "观察",
+      "addObservation": "添加观察",
+      "noObservations": "还没有观察",
+      "premiumRequired": "需要高级版"
+    },
+    "settings": {
+      "title": "设置",
+      "account": "账户",
+      "cloudStorage": "云存储",
+      "cloudStorageDescription": "在设备间同步您的追踪器",
+      "enableCloudStorage": "启用云存储",
+      "disableCloudStorage": "禁用云存储",
+      "offloadData": "将数据转移到设备",
+      "deleteCloudData": "删除云数据",
+      "premium": "高级版",
+      "premiumDescription": "解锁无限追踪器、云存储等",
+      "subscribe": "订阅 $3/月",
+      "theme": "主题",
+      "language": "语言"
+    }
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "logout": "登出",
+    "dark": "深色",
+    "light": "浅色"
+  }
+}
+

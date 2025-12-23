@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "ようこそ",
+      "signInWithGoogle": "Googleでサインイン",
+      "signInWithApple": "Appleでサインイン",
+      "signInWithGitHub": "GitHubでサインイン",
+      "continueWithoutSignIn": "サインインせずに続ける"
+    },
+    "home": {
+      "title": "マイトラッカー",
+      "noTrackers": "トラッカーはまだありません",
+      "createTracker": "トラッカーを作成",
+      "trackerLimit": "トラッカー制限に達しました",
+      "freeLimit": "無料ユーザーは最大10個のトラッカーを作成できます"
+    },
+    "details": {
+      "name": "名前",
+      "description": "説明",
+      "timeSinceCreated": "作成からの時間",
+      "timeSinceRestart": "再起動からの時間",
+      "restartCount": "再起動回数",
+      "restartTracker": "トラッカーを再起動",
+      "observations": "観察",
+      "addObservation": "観察を追加",
+      "noObservations": "観察はまだありません",
+      "premiumRequired": "プレミアムが必要です"
+    },
+    "settings": {
+      "title": "設定",
+      "account": "アカウント",
+      "cloudStorage": "クラウドストレージ",
+      "cloudStorageDescription": "デバイス間でトラッカーを同期",
+      "enableCloudStorage": "クラウドストレージを有効化",
+      "disableCloudStorage": "クラウドストレージを無効化",
+      "offloadData": "データをデバイスに転送",
+      "deleteCloudData": "クラウドデータを削除",
+      "premium": "プレミアム",
+      "premiumDescription": "無制限のトラッカー、クラウドストレージなどを解除",
+      "subscribe": "$3/月で購読",
+      "theme": "テーマ",
+      "language": "言語"
+    }
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "logout": "ログアウト",
+    "dark": "ダーク",
+    "light": "ライト"
+  }
+}
+

@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Selamat Datang",
+      "signInWithGoogle": "Masuk dengan Google",
+      "signInWithApple": "Masuk dengan Apple",
+      "signInWithGitHub": "Masuk dengan GitHub",
+      "continueWithoutSignIn": "Lanjutkan tanpa masuk"
+    },
+    "home": {
+      "title": "Pelacak Saya",
+      "noTrackers": "Belum ada pelacak",
+      "createTracker": "Buat Pelacak",
+      "trackerLimit": "Batas pelacak tercapai",
+      "freeLimit": "Pengguna gratis dapat membuat hingga 10 pelacak"
+    },
+    "details": {
+      "name": "Nama",
+      "description": "Deskripsi",
+      "timeSinceCreated": "Waktu sejak dibuat",
+      "timeSinceRestart": "Waktu sejak restart",
+      "restartCount": "Jumlah restart",
+      "restartTracker": "Restart Pelacak",
+      "observations": "Observasi",
+      "addObservation": "Tambah Observasi",
+      "noObservations": "Belum ada observasi",
+      "premiumRequired": "Premium diperlukan"
+    },
+    "settings": {
+      "title": "Pengaturan",
+      "account": "Akun",
+      "cloudStorage": "Penyimpanan Cloud",
+      "cloudStorageDescription": "Sinkronkan pelacak Anda antar perangkat",
+      "enableCloudStorage": "Aktifkan Penyimpanan Cloud",
+      "disableCloudStorage": "Nonaktifkan Penyimpanan Cloud",
+      "offloadData": "Pindahkan data ke perangkat",
+      "deleteCloudData": "Hapus data cloud",
+      "premium": "Premium",
+      "premiumDescription": "Buka kunci pelacak tak terbatas, penyimpanan cloud, dan lainnya",
+      "subscribe": "Berlangganan $3/bulan",
+      "theme": "Tema",
+      "language": "Bahasa"
+    }
+  },
+  "common": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "logout": "Keluar",
+    "dark": "Gelap",
+    "light": "Terang"
+  }
+}
+

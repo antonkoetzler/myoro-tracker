@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Bem-vindo",
+      "signInWithGoogle": "Entrar com Google",
+      "signInWithApple": "Entrar com Apple",
+      "signInWithGitHub": "Entrar com GitHub",
+      "continueWithoutSignIn": "Continuar sem entrar"
+    },
+    "home": {
+      "title": "Meus Rastreadores",
+      "noTrackers": "Ainda não há rastreadores",
+      "createTracker": "Criar Rastreador",
+      "trackerLimit": "Limite de rastreadores atingido",
+      "freeLimit": "Usuários gratuitos podem criar até 10 rastreadores"
+    },
+    "details": {
+      "name": "Nome",
+      "description": "Descrição",
+      "timeSinceCreated": "Tempo desde a criação",
+      "timeSinceRestart": "Tempo desde a reinicialização",
+      "restartCount": "Contagem de reinicializações",
+      "restartTracker": "Reiniciar Rastreador",
+      "observations": "Observações",
+      "addObservation": "Adicionar Observação",
+      "noObservations": "Ainda não há observações",
+      "premiumRequired": "Premium necessário"
+    },
+    "settings": {
+      "title": "Configurações",
+      "account": "Conta",
+      "cloudStorage": "Armazenamento na Nuvem",
+      "cloudStorageDescription": "Sincronize seus rastreadores entre dispositivos",
+      "enableCloudStorage": "Ativar Armazenamento na Nuvem",
+      "disableCloudStorage": "Desativar Armazenamento na Nuvem",
+      "offloadData": "Transferir dados para o dispositivo",
+      "deleteCloudData": "Excluir dados da nuvem",
+      "premium": "Premium",
+      "premiumDescription": "Desbloqueie rastreadores ilimitados, armazenamento na nuvem e mais",
+      "subscribe": "Assinar por $3/mês",
+      "theme": "Tema",
+      "language": "Idioma"
+    }
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "logout": "Sair",
+    "dark": "Escuro",
+    "light": "Claro"
+  }
+}
+

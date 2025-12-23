@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "स्वागत है",
+      "signInWithGoogle": "Google के साथ साइन इन करें",
+      "signInWithApple": "Apple के साथ साइन इन करें",
+      "signInWithGitHub": "GitHub के साथ साइन इन करें",
+      "continueWithoutSignIn": "साइन इन किए बिना जारी रखें"
+    },
+    "home": {
+      "title": "मेरे ट्रैकर",
+      "noTrackers": "अभी तक कोई ट्रैकर नहीं",
+      "createTracker": "ट्रैकर बनाएं",
+      "trackerLimit": "ट्रैकर सीमा पहुंच गई",
+      "freeLimit": "मुफ्त उपयोगकर्ता 10 ट्रैकर तक बना सकते हैं"
+    },
+    "details": {
+      "name": "नाम",
+      "description": "विवरण",
+      "timeSinceCreated": "बनाए जाने के बाद से समय",
+      "timeSinceRestart": "पुनः आरंभ के बाद से समय",
+      "restartCount": "पुनः आरंभ की संख्या",
+      "restartTracker": "ट्रैकर पुनः आरंभ करें",
+      "observations": "अवलोकन",
+      "addObservation": "अवलोकन जोड़ें",
+      "noObservations": "अभी तक कोई अवलोकन नहीं",
+      "premiumRequired": "प्रीमियम आवश्यक"
+    },
+    "settings": {
+      "title": "सेटिंग्स",
+      "account": "खाता",
+      "cloudStorage": "क्लाउड स्टोरेज",
+      "cloudStorageDescription": "अपने ट्रैकर को उपकरणों के बीच सिंक करें",
+      "enableCloudStorage": "क्लाउड स्टोरेज सक्षम करें",
+      "disableCloudStorage": "क्लाउड स्टोरेज अक्षम करें",
+      "offloadData": "डेटा को उपकरण पर स्थानांतरित करें",
+      "deleteCloudData": "क्लाउड डेटा हटाएं",
+      "premium": "प्रीमियम",
+      "premiumDescription": "असीमित ट्रैकर, क्लाउड स्टोरेज और अधिक अनलॉक करें",
+      "subscribe": "$3/महीना सदस्यता लें",
+      "theme": "थीम",
+      "language": "भाषा"
+    }
+  },
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "logout": "लॉग आउट",
+    "dark": "डार्क",
+    "light": "लाइट"
+  }
+}
+

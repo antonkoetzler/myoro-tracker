@@ -1,0 +1,58 @@
+{
+  "app": {
+    "name": "Myoro Tracker"
+  },
+  "screens": {
+    "auth": {
+      "title": "Chào mừng",
+      "signInWithGoogle": "Đăng nhập bằng Google",
+      "signInWithApple": "Đăng nhập bằng Apple",
+      "signInWithGitHub": "Đăng nhập bằng GitHub",
+      "continueWithoutSignIn": "Tiếp tục mà không đăng nhập"
+    },
+    "home": {
+      "title": "Trình Theo Dõi Của Tôi",
+      "noTrackers": "Chưa có trình theo dõi",
+      "createTracker": "Tạo Trình Theo Dõi",
+      "trackerLimit": "Đã đạt giới hạn trình theo dõi",
+      "freeLimit": "Người dùng miễn phí có thể tạo tối đa 10 trình theo dõi"
+    },
+    "details": {
+      "name": "Tên",
+      "description": "Mô tả",
+      "timeSinceCreated": "Thời gian từ khi tạo",
+      "timeSinceRestart": "Thời gian từ khi khởi động lại",
+      "restartCount": "Số lần khởi động lại",
+      "restartTracker": "Khởi Động Lại Trình Theo Dõi",
+      "observations": "Quan Sát",
+      "addObservation": "Thêm Quan Sát",
+      "noObservations": "Chưa có quan sát",
+      "premiumRequired": "Yêu cầu Premium"
+    },
+    "settings": {
+      "title": "Cài Đặt",
+      "account": "Tài Khoản",
+      "cloudStorage": "Lưu Trữ Đám Mây",
+      "cloudStorageDescription": "Đồng bộ trình theo dõi của bạn giữa các thiết bị",
+      "enableCloudStorage": "Bật Lưu Trữ Đám Mây",
+      "disableCloudStorage": "Tắt Lưu Trữ Đám Mây",
+      "offloadData": "Chuyển dữ liệu sang thiết bị",
+      "deleteCloudData": "Xóa dữ liệu đám mây",
+      "premium": "Premium",
+      "premiumDescription": "Mở khóa trình theo dõi không giới hạn, lưu trữ đám mây và hơn thế nữa",
+      "subscribe": "Đăng ký $3/tháng",
+      "theme": "Giao Diện",
+      "language": "Ngôn Ngữ"
+    }
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Chỉnh Sửa",
+    "logout": "Đăng Xuất",
+    "dark": "Tối",
+    "light": "Sáng"
+  }
+}
+
