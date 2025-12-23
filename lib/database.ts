@@ -14,6 +14,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       user_id TEXT,
       name TEXT NOT NULL,
       description TEXT,
+      color TEXT DEFAULT '#3B82F6',
       created_at TEXT NOT NULL,
       last_restart_at TEXT NOT NULL,
       restart_count INTEGER DEFAULT 0,
@@ -36,12 +37,31 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       user_id TEXT PRIMARY KEY,
       cloud_enabled INTEGER DEFAULT 0,
       premium_active INTEGER DEFAULT 0,
-      premium_expires_at TEXT
+      premium_expires_at TEXT,
+      theme TEXT DEFAULT 'system'
     );
 
     CREATE INDEX IF NOT EXISTS idx_trackers_user_id ON trackers(user_id);
     CREATE INDEX IF NOT EXISTS idx_observations_tracker_id ON observations(tracker_id);
   `);
+
+  // Migrations: Add color column if it doesn't exist
+  try {
+    await db.execAsync(`
+      ALTER TABLE trackers ADD COLUMN color TEXT DEFAULT '#3B82F6';
+    `);
+  } catch (error) {
+    // Column already exists, ignore
+  }
+
+  // Migrations: Add theme column if it doesn't exist
+  try {
+    await db.execAsync(`
+      ALTER TABLE user_preferences ADD COLUMN theme TEXT DEFAULT 'system';
+    `);
+  } catch (error) {
+    // Column already exists, ignore
+  }
 
   return db;
 }
@@ -82,12 +102,13 @@ export async function createTracker(
   const now = new Date().toISOString();
 
   await database.runAsync(
-    'INSERT INTO trackers (id, user_id, name, description, created_at, last_restart_at, restart_count, cloud_synced, cloud_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO trackers (id, user_id, name, description, color, created_at, last_restart_at, restart_count, cloud_synced, cloud_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [
       id,
       tracker.user_id,
       tracker.name,
       tracker.description,
+      tracker.color || '#3B82F6',
       now,
       now,
       tracker.restart_count,
@@ -116,6 +137,10 @@ export async function updateTracker(
   if (updates.description !== undefined) {
     fields.push('description = ?');
     values.push(updates.description);
+  }
+  if (updates.color !== undefined) {
+    fields.push('color = ?');
+    values.push(updates.color);
   }
   if (updates.last_restart_at !== undefined) {
     fields.push('last_restart_at = ?');
@@ -243,10 +268,11 @@ export async function getUserPreferences(
       cloud_enabled: false,
       premium_active: false,
       premium_expires_at: null,
+      theme: 'system',
     };
     await database.runAsync(
-      'INSERT INTO user_preferences (user_id, cloud_enabled, premium_active, premium_expires_at) VALUES (?, ?, ?, ?)',
-      [userId, 0, 0, null],
+      'INSERT INTO user_preferences (user_id, cloud_enabled, premium_active, premium_expires_at, theme) VALUES (?, ?, ?, ?, ?)',
+      [userId, 0, 0, null, 'system'],
     );
     return defaultPrefs;
   }
@@ -255,6 +281,7 @@ export async function getUserPreferences(
     ...result,
     cloud_enabled: Boolean(result.cloud_enabled),
     premium_active: Boolean(result.premium_active),
+    theme: (result.theme as 'light' | 'dark' | 'system') || 'system',
   };
 }
 
@@ -277,6 +304,10 @@ export async function updateUserPreferences(
   if (updates.premium_expires_at !== undefined) {
     fields.push('premium_expires_at = ?');
     values.push(updates.premium_expires_at);
+  }
+  if (updates.theme !== undefined) {
+    fields.push('theme = ?');
+    values.push(updates.theme);
   }
 
   if (fields.length === 0) return;

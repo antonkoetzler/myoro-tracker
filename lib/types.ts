@@ -3,6 +3,7 @@ export interface Tracker {
   user_id: string | null;
   name: string;
   description: string;
+  color: string;
   created_at: string;
   last_restart_at: string;
   restart_count: number;
@@ -25,4 +26,5 @@ export interface UserPreferences {
   cloud_enabled: boolean;
   premium_active: boolean;
   premium_expires_at: string | null;
+  theme: 'light' | 'dark' | 'system';
 }

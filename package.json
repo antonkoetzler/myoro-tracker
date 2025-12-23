@@ -14,13 +14,15 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "eslint 'app/**/*.{js,ts,jsx,tsx}' 'components/**/*.{js,ts,jsx,tsx}' '*.{js,ts,mjs,mts}'",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "seed": "tsx scripts/seed.ts"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@react-navigation/native": "^7.1.6",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/native": "^7.1.26",
     "@supabase/supabase-js": "^2.39.0",
     "@tamagui/config": "^1.141.5",
     "@tamagui/lucide-icons": "^1.141.5",
@@ -45,6 +47,7 @@
     "react-dom": "19.1.0",
     "react-i18next": "^14.0.5",
     "react-native": "0.81.5",
+    "react-native-color-picker": "^0.6.0",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
@@ -70,6 +73,7 @@
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
     "prettier": "^3.7.4",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.50.0"
   }

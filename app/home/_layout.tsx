@@ -1,11 +1,15 @@
-import { Text, YStack } from 'tamagui';
+import { Stack } from 'expo-router';
 
 export default function HomeLayout() {
   return (
-    <YStack flex={1}>
-      <Text fontSize={20} color={'pink'}>
-        Hello World
-      </Text>
-    </YStack>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="create" />
+      <Stack.Screen name="[id]" />
+    </Stack>
   );
 }

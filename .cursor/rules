@@ -15,4 +15,6 @@ alwaysApply: true
 
 6. Always run linting and formatting checks before finishing your work
 
-7. Usiong the `any` keyword is forbidden
+7. Using the `any` keyword is strictly forbidden
+
+8. Never try to reinvent the wheel. This project uses Yarn, there are lots of premade resources already

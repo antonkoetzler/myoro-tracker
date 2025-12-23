@@ -19,6 +19,17 @@ import id from '../locales/id.json';
 import vi from '../locales/vi.json';
 import th from '../locales/th.json';
 
+/// Function for this
+const missingKeyHandlerCallback = (
+  lngs: readonly string[],
+  _: string,
+  key: string,
+) => {
+  console.error(
+    `Missing translation key: ${key} for language(s): ${lngs.join(', ')}`,
+  );
+};
+
 i18n.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   resources: {
@@ -46,6 +57,8 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false,
   },
+  saveMissing: __DEV__,
+  missingKeyHandler: __DEV__ ? missingKeyHandlerCallback : undefined,
 });
 
 export default i18n;

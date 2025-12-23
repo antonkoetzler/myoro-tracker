@@ -12,6 +12,7 @@
     "jsx": "react-jsx",
     "module": "system",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "noEmitOnError": false,
     "noImplicitAny": false,
     "noImplicitReturns": false,

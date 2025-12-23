@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import type { Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { YStack, Button, Text, Spinner } from 'tamagui';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { YStack, Button, Text, Spinner, XStack } from 'tamagui';
 import { supabase } from '../../lib/supabase';
 import * as WebBrowser from 'expo-web-browser';
+import { GoogleIcon, AppleIcon, GitHubIcon } from '../../components/OAuthIcons';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function AuthScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleOAuth = async (provider: 'google' | 'apple' | 'github') => {
@@ -36,7 +39,15 @@ export default function AuthScreen() {
   };
 
   return (
-    <YStack flex={1} items="center" justify="center" p="$4" gap="$4">
+    <YStack
+      flex={1}
+      items="center"
+      justify="center"
+      pt={insets.top}
+      pb={insets.bottom}
+      px="$4"
+      gap="$4"
+    >
       <Text fontSize="$8" fontWeight="bold" mb="$4">
         {t('screens.auth.title')}
       </Text>
@@ -50,7 +61,10 @@ export default function AuthScreen() {
         {loading === 'google' ? (
           <Spinner />
         ) : (
-          <Text>{t('screens.auth.signInWithGoogle')}</Text>
+          <XStack items="center" gap="$2">
+            <GoogleIcon size={20} />
+            <Text>{t('screens.auth.signInWithGoogle')}</Text>
+          </XStack>
         )}
       </Button>
 
@@ -63,7 +77,10 @@ export default function AuthScreen() {
         {loading === 'apple' ? (
           <Spinner />
         ) : (
-          <Text>{t('screens.auth.signInWithApple')}</Text>
+          <XStack items="center" gap="$2">
+            <AppleIcon size={20} />
+            <Text>{t('screens.auth.signInWithApple')}</Text>
+          </XStack>
         )}
       </Button>
 
@@ -76,7 +93,10 @@ export default function AuthScreen() {
         {loading === 'github' ? (
           <Spinner />
         ) : (
-          <Text>{t('screens.auth.signInWithGitHub')}</Text>
+          <XStack items="center" gap="$2">
+            <GitHubIcon size={20} />
+            <Text>{t('screens.auth.signInWithGitHub')}</Text>
+          </XStack>
         )}
       </Button>
 

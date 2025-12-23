@@ -18,7 +18,23 @@
    - Set callback URL to: `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`
    - Copy Client ID and Client Secret to Supabase
 
-## 8. Run the App
+## 8. Seed Local Database (Optional)
+
+For local development, you can seed your SQLite database with sample data:
+
+```bash
+yarn seed
+```
+
+This creates 3 sample trackers with observations in your local database.
+
+**Note:** For Supabase seeding, use the SQL script in `supabase/seed.sql` and run it in the Supabase SQL Editor. Supabase doesn't have built-in environment separation, but you can:
+
+- Use separate Supabase projects for dev/staging/prod
+- Use Supabase branching (preview branches) for testing
+- Run SQL scripts manually in each environment
+
+## 9. Run the App
 
 ```bash
 yarn start

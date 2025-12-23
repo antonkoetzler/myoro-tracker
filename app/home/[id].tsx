@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   YStack,
   XStack,
@@ -14,6 +15,7 @@ import {
   Separator,
 } from 'tamagui';
 import { ArrowLeft, RotateCcw, Plus } from '@tamagui/lucide-icons';
+import { useToastController } from '@tamagui/toast';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { supabase } from '../../lib/supabase';
@@ -24,6 +26,8 @@ export default function TrackerDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useTranslation();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const toast = useToastController();
   const [tracker, setTracker] = useState<Tracker | null>(null);
   const [observations, setObservations] = useState<Observation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,8 +84,10 @@ export default function TrackerDetailsScreen() {
         restart_count: tracker.restart_count + 1,
       });
       await loadTracker();
+      toast.show('Tracker restarted', { message: 'Timer has been reset' });
     } catch (error) {
       console.error('Error restarting tracker:', error);
+      toast.show('Error', { message: 'Failed to restart tracker' });
     } finally {
       setRestarting(false);
     }
@@ -90,7 +96,9 @@ export default function TrackerDetailsScreen() {
   const handlePickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      alert('Permission to access camera roll is required!');
+      toast.show('Permission required', {
+        message: 'Permission to access camera roll is required!',
+      });
       return;
     }
 
@@ -130,9 +138,12 @@ export default function TrackerDetailsScreen() {
       setObservationImage(null);
       setShowAddObservation(false);
       await loadObservations();
+      toast.show('Observation added', {
+        message: 'Your observation has been saved',
+      });
     } catch (error) {
       console.error('Error adding observation:', error);
-      alert('Failed to add observation');
+      toast.show('Error', { message: 'Failed to add observation' });
     } finally {
       setAddingObservation(false);
     }
@@ -171,11 +182,14 @@ export default function TrackerDetailsScreen() {
   return (
     <YStack flex={1} bg="$background">
       <XStack
-        p="$4"
+        pt={insets.top}
+        pb="$4"
+        px="$4"
         items="center"
         gap="$3"
         borderBottomWidth={1}
         borderBottomColor="$borderColor"
+        bg="$background"
       >
         <Button
           size="$3"
@@ -183,9 +197,17 @@ export default function TrackerDetailsScreen() {
           icon={ArrowLeft}
           onPress={() => router.back()}
         />
-        <Text fontSize="$6" fontWeight="bold" flex={1}>
-          {tracker.name}
-        </Text>
+        <XStack gap="$2" items="center" flex={1}>
+          <YStack
+            width={4}
+            height={24}
+            bg={tracker.color || '#3B82F6'}
+            rounded="$2"
+          />
+          <Text fontSize="$6" fontWeight="bold" flex={1}>
+            {tracker.name}
+          </Text>
+        </XStack>
       </XStack>
 
       <ScrollView flex={1} contentContainerStyle={{ padding: 16 }}>
