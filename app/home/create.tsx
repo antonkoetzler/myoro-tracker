@@ -48,7 +48,7 @@ export default function CreateTrackerScreen() {
   };
 
   return (
-    <YStack flex={1} padding="$4" gap="$4">
+    <YStack flex={1} p="$4" gap="$4">
       <Text fontSize="$6" fontWeight="bold">
         {t('screens.home.createTracker')}
       </Text>
@@ -77,11 +77,10 @@ export default function CreateTrackerScreen() {
       <Button
         onPress={handleCreate}
         disabled={loading || !name.trim()}
-        marginTop="auto"
+        mt="auto"
       >
         {loading ? <Spinner /> : <Text>{t('common.save')}</Text>}
       </Button>
     </YStack>
   );
 }
-

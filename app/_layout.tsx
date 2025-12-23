@@ -14,7 +14,11 @@ import { SplashScreen, Stack } from 'expo-router';
 import { Provider } from 'components/Provider';
 import { supabase } from '../lib/supabase';
 import * as database from '../lib/database';
-import { syncToCloud, syncFromCloud, setupRealtimeListeners } from '../lib/sync';
+import {
+  syncToCloud,
+  syncFromCloud,
+  setupRealtimeListeners,
+} from '../lib/sync';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -34,7 +38,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [interLoaded, interError] = useFonts({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
   const [userId, setUserId] = useState<string | null>(null);
@@ -88,33 +94,31 @@ export default function RootLayout() {
     }
   }, [interLoaded, interError]);
 
-  return !interLoaded && !interError
-    ? null
-    : (
-      <Provider>
-        <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
-          <StatusBar style={isDark ? 'dark' : 'light'} />
-          <Stack>
-            <Stack.Screen
-              name='auth'
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name='home'
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name='settings'
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
-        </ThemeProvider>
-      </Provider>
-    );
+  return !interLoaded && !interError ? null : (
+    <Provider>
+      <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+        <StatusBar style={isDark ? 'dark' : 'light'} />
+        <Stack>
+          <Stack.Screen
+            name="auth"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="home"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="settings"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      </ThemeProvider>
+    </Provider>
+  );
 }

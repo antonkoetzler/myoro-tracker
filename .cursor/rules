@@ -13,4 +13,6 @@ alwaysApply: true
 
 5. Maintain consistency with existing file structure and naming conventions
 
-6. Always run linting and formatting checks before committing code
+6. Always run linting and formatting checks before finishing your work
+
+7. Usiong the `any` keyword is forbidden

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 import {
@@ -9,14 +10,16 @@ import {
   Text,
   ScrollView,
   Card,
-  Separator,
-  Sheet,
-  Adapt,
-  Select,
   Spinner,
 } from 'tamagui';
-import { useTheme } from 'tamagui';
-import { MoreVertical, Plus, Moon, Sun, LogOut, Settings } from '@tamagui/lucide-icons';
+import {
+  MoreVertical,
+  Plus,
+  Moon,
+  Sun,
+  LogOut,
+  Settings,
+} from '@tamagui/lucide-icons';
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
 import type { Tracker } from '../../lib/types';
@@ -24,7 +27,6 @@ import type { Tracker } from '../../lib/types';
 export default function HomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const theme = useTheme();
   const colorScheme = useColorScheme();
   const [trackers, setTrackers] = useState<Tracker[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,10 +46,10 @@ export default function HomeScreen() {
       data: { user },
     } = await supabase.auth.getUser();
     setUserId(user?.id || null);
-    
+
     const prefs = await database.getUserPreferences(user?.id || null);
     setPremium(prefs.premium_active);
-    
+
     const count = await database.getTrackerCount(user?.id || null);
     setTrackerCount(count);
   };
@@ -71,21 +73,20 @@ export default function HomeScreen() {
       alert(t('screens.home.trackerLimit'));
       return;
     }
-    router.push('/home/create');
+    router.push('/home/create' as Href);
   };
 
   const handleTrackerPress = (id: string) => {
-    router.push(`/home/${id}`);
+    router.push(`/home/${id}` as Href);
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUserId(null);
-    router.replace('/auth');
+    router.replace('/auth' as Href);
   };
 
   const toggleTheme = () => {
-    // Theme toggle will be handled by the root layout
     setShowMenu(false);
   };
 
@@ -104,18 +105,18 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
+      <YStack flex={1} items="center" justify="center">
         <Spinner size="large" />
       </YStack>
     );
   }
 
   return (
-    <YStack flex={1} backgroundColor="$background">
+    <YStack flex={1} bg="$background">
       <XStack
-        padding="$4"
-        justifyContent="space-between"
-        alignItems="center"
+        p="$4"
+        justify="space-between"
+        items="center"
         borderBottomWidth={1}
         borderBottomColor="$borderColor"
       >
@@ -129,56 +130,88 @@ export default function HomeScreen() {
             icon={Plus}
             onPress={handleCreateTracker}
           />
-          <Sheet open={showMenu} onOpenChange={setShowMenu} modal snapPoints={[35]}>
-            <Sheet.Trigger asChild>
-              <Button size="$3" circular icon={MoreVertical} />
-            </Sheet.Trigger>
-            <Adapt when="sm" platform="touch">
-              <Sheet.Sheet modal dismissOnSnapToBottom>
-                <Sheet.Frame padding="$4" gap="$4">
-                  <Button
-                    icon={colorScheme === 'dark' ? Sun : Moon}
-                    onPress={toggleTheme}
-                  >
-                    {colorScheme === 'dark' ? t('common.light') : t('common.dark')}
-                  </Button>
-                  <Button icon={Settings} onPress={() => router.push('/settings')}>
-                    {t('screens.settings.title')}
-                  </Button>
-                  {userId && (
-                    <Button icon={LogOut} onPress={handleLogout} variant="outlined">
-                      {t('common.logout')}
-                    </Button>
-                  )}
-                  {!userId && (
-                    <Button onPress={() => router.push('/auth')} variant="outlined">
-                      {t('screens.auth.title')}
-                    </Button>
-                  )}
-                </Sheet.Frame>
-              </Sheet.Sheet>
-            </Adapt>
-          </Sheet>
+          <Button
+            size="$3"
+            circular
+            icon={MoreVertical}
+            onPress={() => setShowMenu(!showMenu)}
+          />
         </XStack>
       </XStack>
 
-      <ScrollView flex={1} padding="$4">
+      {showMenu && (
+        <YStack
+          bg="$background"
+          borderWidth={1}
+          borderColor="$borderColor"
+          rounded="$4"
+          p="$3"
+          gap="$2"
+          mx="$4"
+          mt="$2"
+        >
+          <Button
+            icon={colorScheme === 'dark' ? Sun : Moon}
+            onPress={toggleTheme}
+            size="$3"
+          >
+            {colorScheme === 'dark' ? t('common.light') : t('common.dark')}
+          </Button>
+          <Button
+            icon={Settings}
+            onPress={() => {
+              router.push('/settings' as Href);
+              setShowMenu(false);
+            }}
+            size="$3"
+          >
+            {t('screens.settings.title')}
+          </Button>
+          {userId && (
+            <Button
+              icon={LogOut}
+              onPress={handleLogout}
+              variant="outlined"
+              size="$3"
+            >
+              {t('common.logout')}
+            </Button>
+          )}
+          {!userId && (
+            <Button
+              onPress={() => {
+                router.push('/auth' as Href);
+                setShowMenu(false);
+              }}
+              variant="outlined"
+              size="$3"
+            >
+              {t('screens.auth.title')}
+            </Button>
+          )}
+        </YStack>
+      )}
+
+      <ScrollView flex={1} p="$4">
         {!premium && trackerCount >= 10 && (
-          <YStack padding="$4" backgroundColor="$yellow2" borderRadius="$4" marginBottom="$4">
+          <YStack p="$4" bg="$yellow2" rounded="$4" mb="$4">
             <Text fontSize="$4" color="$yellow11">
               {t('screens.home.trackerLimit')}
             </Text>
-            <Text fontSize="$3" color="$yellow11" marginTop="$2">
+            <Text fontSize="$3" color="$yellow11" mt="$2">
               {t('screens.home.freeLimit')}
             </Text>
           </YStack>
         )}
         {trackers.length === 0 ? (
-          <YStack alignItems="center" justifyContent="center" padding="$8" gap="$4">
+          <YStack items="center" justify="center" p="$8" gap="$4">
             <Text fontSize="$5" color="$color">
               {t('screens.home.noTrackers')}
             </Text>
-            <Button onPress={handleCreateTracker} disabled={!premium && trackerCount >= 10}>
+            <Button
+              onPress={handleCreateTracker}
+              disabled={!premium && trackerCount >= 10}
+            >
               {t('screens.home.createTracker')}
             </Button>
           </YStack>
@@ -189,19 +222,20 @@ export default function HomeScreen() {
                 key={tracker.id}
                 pressStyle={{ scale: 0.98 }}
                 onPress={() => handleTrackerPress(tracker.id)}
-                padding="$4"
+                p="$4"
               >
                 <YStack gap="$2">
                   <Text fontSize="$5" fontWeight="bold">
                     {tracker.name}
                   </Text>
                   {tracker.description && (
-                    <Text fontSize="$3" color="$colorSubtitle">
+                    <Text fontSize="$3" opacity={0.7}>
                       {tracker.description}
                     </Text>
                   )}
-                  <Text fontSize="$2" color="$colorSubtitle">
-                    {t('screens.details.timeSinceRestart')}: {formatTime(tracker.last_restart_at)}
+                  <Text fontSize="$2" opacity={0.7}>
+                    {t('screens.details.timeSinceRestart')}:{' '}
+                    {formatTime(tracker.last_restart_at)}
                   </Text>
                 </YStack>
               </Card>
@@ -212,4 +246,3 @@ export default function HomeScreen() {
     </YStack>
   );
 }
-

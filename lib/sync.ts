@@ -44,7 +44,7 @@ export async function syncToCloud(userId: string | null): Promise<void> {
   // Sync observations
   for (const tracker of trackers) {
     if (!tracker.cloud_id) continue; // Skip if tracker not synced yet
-    
+
     const observations = await database.getObservationsByTracker(tracker.id);
     for (const obs of observations) {
       if (!obs.cloud_synced || !obs.cloud_id) {
@@ -53,16 +53,20 @@ export async function syncToCloud(userId: string | null): Promise<void> {
           if (obs.image_path) {
             try {
               // Upload image to Supabase storage
-              const imageData = await FileSystem.readAsStringAsync(obs.image_path, {
-                encoding: FileSystem.EncodingType.Base64,
-              });
+              const imageData = await FileSystem.readAsStringAsync(
+                obs.image_path,
+                {
+                  encoding: FileSystem.EncodingType.Base64,
+                },
+              );
               const fileName = `${obs.id}.jpg`;
-              const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('observations')
-                .upload(fileName, decode(imageData), {
-                  contentType: 'image/jpeg',
-                  upsert: true,
-                });
+              const { data: uploadData, error: uploadError } =
+                await supabase.storage
+                  .from('observations')
+                  .upload(fileName, decode(imageData), {
+                    contentType: 'image/jpeg',
+                    upsert: true,
+                  });
 
               if (!uploadError && uploadData) {
                 const { data: urlData } = supabase.storage
@@ -133,7 +137,9 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
       for (const cloudTracker of trackers) {
         // Check if local tracker exists with this cloud_id
         const localTrackers = await database.getAllTrackers(userId);
-        const existing = localTrackers.find((t) => t.cloud_id === cloudTracker.id);
+        const existing = localTrackers.find(
+          (t) => t.cloud_id === cloudTracker.id,
+        );
 
         if (existing) {
           // Update existing
@@ -175,12 +181,18 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
 
         if (observations) {
           const localTrackers = await database.getAllTrackers(userId);
-          const localTracker = localTrackers.find((t) => t.cloud_id === cloudTracker.id);
+          const localTracker = localTrackers.find(
+            (t) => t.cloud_id === cloudTracker.id,
+          );
           if (!localTracker) continue;
 
           for (const cloudObs of observations) {
-            const localObservations = await database.getObservationsByTracker(localTracker.id);
-            const existing = localObservations.find((o) => o.cloud_id === cloudObs.id);
+            const localObservations = await database.getObservationsByTracker(
+              localTracker.id,
+            );
+            const existing = localObservations.find(
+              (o) => o.cloud_id === cloudObs.id,
+            );
 
             if (!existing) {
               // Download image if exists
@@ -195,9 +207,13 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
                   await new Promise((resolve) => {
                     reader.onloadend = async () => {
                       const base64 = reader.result as string;
-                      await FileSystem.writeAsStringAsync(fileUri, base64.split(',')[1], {
-                        encoding: FileSystem.EncodingType.Base64,
-                      });
+                      await FileSystem.writeAsStringAsync(
+                        fileUri,
+                        base64.split(',')[1],
+                        {
+                          encoding: FileSystem.EncodingType.Base64,
+                        },
+                      );
                       imagePath = fileUri;
                       resolve(null);
                     };
@@ -228,7 +244,10 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
   }
 }
 
-export function setupRealtimeListeners(userId: string | null, onUpdate: () => void): () => void {
+export function setupRealtimeListeners(
+  userId: string | null,
+  onUpdate: () => void,
+): () => void {
   if (!userId) return () => {};
 
   const channel = supabase
@@ -243,7 +262,7 @@ export function setupRealtimeListeners(userId: string | null, onUpdate: () => vo
       },
       () => {
         syncFromCloud(userId).then(onUpdate);
-      }
+      },
     )
     .on(
       'postgres_changes',
@@ -254,7 +273,7 @@ export function setupRealtimeListeners(userId: string | null, onUpdate: () => vo
       },
       () => {
         syncFromCloud(userId).then(onUpdate);
-      }
+      },
     )
     .subscribe();
 
@@ -275,7 +294,10 @@ export async function deleteCloudData(userId: string | null): Promise<void> {
 
     if (trackers) {
       for (const tracker of trackers) {
-        await supabase.from('observations').delete().eq('tracker_id', tracker.id);
+        await supabase
+          .from('observations')
+          .delete()
+          .eq('tracker_id', tracker.id);
       }
     }
 
@@ -285,4 +307,3 @@ export async function deleteCloudData(userId: string | null): Promise<void> {
     console.error('Error deleting cloud data:', error);
   }
 }
-

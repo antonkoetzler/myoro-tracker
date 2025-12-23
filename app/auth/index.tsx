@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { YStack, Button, Text, Spinner } from 'tamagui';
 import { supabase } from '../../lib/supabase';
@@ -15,7 +16,7 @@ export default function AuthScreen() {
   const handleOAuth = async (provider: 'google' | 'apple' | 'github') => {
     try {
       setLoading(provider);
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
           redirectTo: 'myapp://auth/callback',
@@ -31,12 +32,12 @@ export default function AuthScreen() {
   };
 
   const handleContinueWithoutSignIn = () => {
-    router.replace('/home');
+    router.replace('/home' as Href);
   };
 
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" gap="$4">
-      <Text fontSize="$8" fontWeight="bold" marginBottom="$4">
+    <YStack flex={1} items="center" justify="center" p="$4" gap="$4">
+      <Text fontSize="$8" fontWeight="bold" mb="$4">
         {t('screens.auth.title')}
       </Text>
 
@@ -46,7 +47,11 @@ export default function AuthScreen() {
         onPress={() => handleOAuth('google')}
         disabled={loading !== null}
       >
-        {loading === 'google' ? <Spinner /> : <Text>{t('screens.auth.signInWithGoogle')}</Text>}
+        {loading === 'google' ? (
+          <Spinner />
+        ) : (
+          <Text>{t('screens.auth.signInWithGoogle')}</Text>
+        )}
       </Button>
 
       <Button
@@ -55,7 +60,11 @@ export default function AuthScreen() {
         onPress={() => handleOAuth('apple')}
         disabled={loading !== null}
       >
-        {loading === 'apple' ? <Spinner /> : <Text>{t('screens.auth.signInWithApple')}</Text>}
+        {loading === 'apple' ? (
+          <Spinner />
+        ) : (
+          <Text>{t('screens.auth.signInWithApple')}</Text>
+        )}
       </Button>
 
       <Button
@@ -64,7 +73,11 @@ export default function AuthScreen() {
         onPress={() => handleOAuth('github')}
         disabled={loading !== null}
       >
-        {loading === 'github' ? <Spinner /> : <Text>{t('screens.auth.signInWithGitHub')}</Text>}
+        {loading === 'github' ? (
+          <Spinner />
+        ) : (
+          <Text>{t('screens.auth.signInWithGitHub')}</Text>
+        )}
       </Button>
 
       <Button
@@ -79,4 +92,3 @@ export default function AuthScreen() {
     </YStack>
   );
 }
-

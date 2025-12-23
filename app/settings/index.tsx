@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 import {
@@ -17,7 +16,6 @@ import {
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
 import { syncToCloud, syncFromCloud, deleteCloudData } from '../../lib/sync';
-import { initDatabase } from '../../lib/database';
 import i18n from '../../lib/i18n';
 
 const LANGUAGES = [
@@ -43,7 +41,6 @@ const LANGUAGES = [
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
-  const router = useRouter();
   const colorScheme = useColorScheme();
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -54,7 +51,7 @@ export default function SettingsScreen() {
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
 
   useEffect(() => {
-    initDatabase();
+    database.initDatabase();
     loadSettings();
   }, []);
 
@@ -90,7 +87,6 @@ export default function SettingsScreen() {
       } = await supabase.auth.getUser();
 
       if (enabled) {
-        // Enable cloud - sync local to cloud
         await database.updateUserPreferences(user?.id || null, {
           cloud_enabled: true,
         });
@@ -98,16 +94,13 @@ export default function SettingsScreen() {
         await syncFromCloud(user?.id || null);
         setCloudEnabled(true);
       } else {
-        // Disable cloud - prompt user
         const shouldOffload = confirm(t('screens.settings.offloadData'));
         if (shouldOffload) {
-          // Data is already local, just disable
           await database.updateUserPreferences(user?.id || null, {
             cloud_enabled: false,
           });
           await deleteCloudData(user?.id || null);
         } else {
-          // User chose to delete cloud data
           await database.updateUserPreferences(user?.id || null, {
             cloud_enabled: false,
           });
@@ -129,22 +122,21 @@ export default function SettingsScreen() {
   };
 
   const handlePremiumSubscribe = () => {
-    // This will be handled by native in-app purchase later
     alert('Premium subscription will be available soon');
   };
 
   if (loading) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
+      <YStack flex={1} items="center" justify="center">
         <Spinner size="large" />
       </YStack>
     );
   }
 
   return (
-    <ScrollView flex={1} padding="$4">
+    <ScrollView flex={1}>
       <YStack gap="$4">
-        <Card padding="$4">
+        <Card p="$4">
           <YStack gap="$3">
             <Text fontSize="$5" fontWeight="bold">
               {t('screens.settings.account')}
@@ -152,27 +144,27 @@ export default function SettingsScreen() {
             <Separator />
             {userId ? (
               <YStack gap="$2">
-                <Text fontSize="$3" color="$colorSubtitle">
+                <Text fontSize="$3" opacity={0.7}>
                   {t('screens.settings.account')}
                 </Text>
                 <Text fontSize="$4">{userEmail || userId}</Text>
               </YStack>
             ) : (
-              <Text fontSize="$4" color="$colorSubtitle">
+              <Text fontSize="$4" opacity={0.7}>
                 Not signed in
               </Text>
             )}
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack gap="$3">
-            <XStack justifyContent="space-between" alignItems="center">
+            <XStack justify="space-between" items="center">
               <YStack flex={1}>
                 <Text fontSize="$5" fontWeight="bold">
                   {t('screens.settings.cloudStorage')}
                 </Text>
-                <Text fontSize="$3" color="$colorSubtitle">
+                <Text fontSize="$3" opacity={0.7}>
                   {t('screens.settings.cloudStorageDescription')}
                 </Text>
               </YStack>
@@ -185,7 +177,7 @@ export default function SettingsScreen() {
               </Switch>
             </XStack>
             {!premium && (
-              <Text fontSize="$2" color="$colorSubtitle">
+              <Text fontSize="$2" opacity={0.7}>
                 {t('screens.details.premiumRequired')}
               </Text>
             )}
@@ -193,13 +185,15 @@ export default function SettingsScreen() {
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack gap="$3">
             <Text fontSize="$5" fontWeight="bold">
               {t('screens.settings.premium')}
             </Text>
             <Separator />
-            <Text fontSize="$4">{t('screens.settings.premiumDescription')}</Text>
+            <Text fontSize="$4">
+              {t('screens.settings.premiumDescription')}
+            </Text>
             {!premium && (
               <Button onPress={handlePremiumSubscribe}>
                 <Text>{t('screens.settings.subscribe')}</Text>
@@ -213,7 +207,7 @@ export default function SettingsScreen() {
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack gap="$3">
             <Text fontSize="$5" fontWeight="bold">
               {t('screens.settings.theme')}
@@ -222,27 +216,34 @@ export default function SettingsScreen() {
             <Text fontSize="$4">
               {colorScheme === 'dark' ? t('common.dark') : t('common.light')}
             </Text>
-            <Text fontSize="$3" color="$colorSubtitle">
+            <Text fontSize="$3" opacity={0.7}>
               Theme is controlled by system settings
             </Text>
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack gap="$3">
             <Text fontSize="$5" fontWeight="bold">
               {t('screens.settings.language')}
             </Text>
             <Separator />
-            <Select value={currentLanguage} onValueChange={handleLanguageChange}>
+            <Select
+              value={currentLanguage}
+              onValueChange={handleLanguageChange}
+            >
               <Select.Trigger width="100%">
                 <Select.Value />
               </Select.Trigger>
               <Select.Content>
                 <Select.ScrollUpButton />
                 <Select.Viewport>
-                  {LANGUAGES.map((lang) => (
-                    <Select.Item key={lang.value} value={lang.value}>
+                  {LANGUAGES.map((lang, index) => (
+                    <Select.Item
+                      key={lang.value}
+                      value={lang.value}
+                      index={index}
+                    >
                       <Select.ItemText>{lang.label}</Select.ItemText>
                     </Select.Item>
                   ))}
@@ -256,4 +257,3 @@ export default function SettingsScreen() {
     </ScrollView>
   );
 }
-

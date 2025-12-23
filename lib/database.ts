@@ -54,11 +54,13 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
 }
 
 // Tracker operations
-export async function getAllTrackers(userId: string | null): Promise<Tracker[]> {
+export async function getAllTrackers(
+  userId: string | null,
+): Promise<Tracker[]> {
   const database = await getDatabase();
   const result = await database.getAllAsync<Tracker>(
     'SELECT * FROM trackers WHERE user_id = ? ORDER BY created_at DESC',
-    [userId]
+    [userId],
   );
   return result;
 }
@@ -67,19 +69,31 @@ export async function getTracker(id: string): Promise<Tracker | null> {
   const database = await getDatabase();
   const result = await database.getFirstAsync<Tracker>(
     'SELECT * FROM trackers WHERE id = ?',
-    [id]
+    [id],
   );
   return result || null;
 }
 
-export async function createTracker(tracker: Omit<Tracker, 'id' | 'cloud_synced' | 'cloud_id'>): Promise<Tracker> {
+export async function createTracker(
+  tracker: Omit<Tracker, 'id' | 'cloud_synced' | 'cloud_id'>,
+): Promise<Tracker> {
   const database = await getDatabase();
   const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const now = new Date().toISOString();
-  
+
   await database.runAsync(
     'INSERT INTO trackers (id, user_id, name, description, created_at, last_restart_at, restart_count, cloud_synced, cloud_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [id, tracker.user_id, tracker.name, tracker.description, now, now, tracker.restart_count, 0, null]
+    [
+      id,
+      tracker.user_id,
+      tracker.name,
+      tracker.description,
+      now,
+      now,
+      tracker.restart_count,
+      0,
+      null,
+    ],
   );
 
   const created = await getTracker(id);
@@ -87,7 +101,10 @@ export async function createTracker(tracker: Omit<Tracker, 'id' | 'cloud_synced'
   return created;
 }
 
-export async function updateTracker(id: string, updates: Partial<Tracker>): Promise<void> {
+export async function updateTracker(
+  id: string,
+  updates: Partial<Tracker>,
+): Promise<void> {
   const database = await getDatabase();
   const fields: string[] = [];
   const values: unknown[] = [];
@@ -122,7 +139,7 @@ export async function updateTracker(id: string, updates: Partial<Tracker>): Prom
   values.push(id);
   await database.runAsync(
     `UPDATE trackers SET ${fields.join(', ')} WHERE id = ?`,
-    values
+    values,
   );
 }
 
@@ -132,34 +149,49 @@ export async function deleteTracker(id: string): Promise<void> {
 }
 
 // Observation operations
-export async function getObservationsByTracker(trackerId: string): Promise<Observation[]> {
+export async function getObservationsByTracker(
+  trackerId: string,
+): Promise<Observation[]> {
   const database = await getDatabase();
   const result = await database.getAllAsync<Observation>(
     'SELECT * FROM observations WHERE tracker_id = ? ORDER BY created_at DESC',
-    [trackerId]
+    [trackerId],
   );
   return result;
 }
 
-export async function createObservation(observation: Omit<Observation, 'id' | 'cloud_synced' | 'cloud_id'>): Promise<Observation> {
+export async function createObservation(
+  observation: Omit<Observation, 'id' | 'cloud_synced' | 'cloud_id'>,
+): Promise<Observation> {
   const database = await getDatabase();
   const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const now = new Date().toISOString();
-  
+
   await database.runAsync(
     'INSERT INTO observations (id, tracker_id, text, image_path, created_at, cloud_synced, cloud_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [id, observation.tracker_id, observation.text, observation.image_path, now, 0, null]
+    [
+      id,
+      observation.tracker_id,
+      observation.text,
+      observation.image_path,
+      now,
+      0,
+      null,
+    ],
   );
 
   const created = await database.getFirstAsync<Observation>(
     'SELECT * FROM observations WHERE id = ?',
-    [id]
+    [id],
   );
   if (!created) throw new Error('Failed to create observation');
   return created;
 }
 
-export async function updateObservation(id: string, updates: Partial<Observation>): Promise<void> {
+export async function updateObservation(
+  id: string,
+  updates: Partial<Observation>,
+): Promise<void> {
   const database = await getDatabase();
   const fields: string[] = [];
   const values: unknown[] = [];
@@ -186,7 +218,7 @@ export async function updateObservation(id: string, updates: Partial<Observation
   values.push(id);
   await database.runAsync(
     `UPDATE observations SET ${fields.join(', ')} WHERE id = ?`,
-    values
+    values,
   );
 }
 
@@ -196,13 +228,15 @@ export async function deleteObservation(id: string): Promise<void> {
 }
 
 // User preferences operations
-export async function getUserPreferences(userId: string | null): Promise<UserPreferences> {
+export async function getUserPreferences(
+  userId: string | null,
+): Promise<UserPreferences> {
   const database = await getDatabase();
   const result = await database.getFirstAsync<UserPreferences>(
     'SELECT * FROM user_preferences WHERE user_id = ?',
-    [userId]
+    [userId],
   );
-  
+
   if (!result) {
     const defaultPrefs: UserPreferences = {
       user_id: userId,
@@ -212,11 +246,11 @@ export async function getUserPreferences(userId: string | null): Promise<UserPre
     };
     await database.runAsync(
       'INSERT INTO user_preferences (user_id, cloud_enabled, premium_active, premium_expires_at) VALUES (?, ?, ?, ?)',
-      [userId, 0, 0, null]
+      [userId, 0, 0, null],
     );
     return defaultPrefs;
   }
-  
+
   return {
     ...result,
     cloud_enabled: Boolean(result.cloud_enabled),
@@ -224,7 +258,10 @@ export async function getUserPreferences(userId: string | null): Promise<UserPre
   };
 }
 
-export async function updateUserPreferences(userId: string | null, updates: Partial<UserPreferences>): Promise<void> {
+export async function updateUserPreferences(
+  userId: string | null,
+  updates: Partial<UserPreferences>,
+): Promise<void> {
   const database = await getDatabase();
   const fields: string[] = [];
   const values: unknown[] = [];
@@ -247,7 +284,7 @@ export async function updateUserPreferences(userId: string | null, updates: Part
   values.push(userId);
   await database.runAsync(
     `UPDATE user_preferences SET ${fields.join(', ')} WHERE user_id = ?`,
-    values
+    values,
   );
 }
 
@@ -255,8 +292,7 @@ export async function getTrackerCount(userId: string | null): Promise<number> {
   const database = await getDatabase();
   const result = await database.getFirstAsync<{ count: number }>(
     'SELECT COUNT(*) as count FROM trackers WHERE user_id = ?',
-    [userId]
+    [userId],
   );
   return result?.count || 0;
 }
-

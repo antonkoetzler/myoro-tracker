@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { YStack, XStack, Button, Text, ScrollView, Card, Image, Input, TextArea, Spinner, Separator } from 'tamagui';
+import {
+  YStack,
+  XStack,
+  Button,
+  Text,
+  ScrollView,
+  Card,
+  Image,
+  TextArea,
+  Spinner,
+  Separator,
+} from 'tamagui';
 import { ArrowLeft, RotateCcw, Plus } from '@tamagui/lucide-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
@@ -94,8 +105,7 @@ export default function TrackerDetailsScreen() {
       const asset = result.assets[0];
       const fileName = `${Date.now()}.jpg`;
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-      
-      // Copy image to document directory
+
       await FileSystem.copyAsync({
         from: asset.uri,
         to: fileUri,
@@ -143,7 +153,7 @@ export default function TrackerDetailsScreen() {
 
   if (loading) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
+      <YStack flex={1} items="center" justify="center">
         <Spinner size="large" />
       </YStack>
     );
@@ -151,7 +161,7 @@ export default function TrackerDetailsScreen() {
 
   if (!tracker) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
+      <YStack flex={1} items="center" justify="center">
         <Text>Tracker not found</Text>
         <Button onPress={() => router.back()}>Go Back</Button>
       </YStack>
@@ -159,20 +169,31 @@ export default function TrackerDetailsScreen() {
   }
 
   return (
-    <YStack flex={1} backgroundColor="$background">
-      <XStack padding="$4" alignItems="center" gap="$3" borderBottomWidth={1} borderBottomColor="$borderColor">
-        <Button size="$3" circular icon={ArrowLeft} onPress={() => router.back()} />
+    <YStack flex={1} bg="$background">
+      <XStack
+        p="$4"
+        items="center"
+        gap="$3"
+        borderBottomWidth={1}
+        borderBottomColor="$borderColor"
+      >
+        <Button
+          size="$3"
+          circular
+          icon={ArrowLeft}
+          onPress={() => router.back()}
+        />
         <Text fontSize="$6" fontWeight="bold" flex={1}>
           {tracker.name}
         </Text>
       </XStack>
 
-      <ScrollView flex={1} padding="$4">
+      <ScrollView flex={1} contentContainerStyle={{ padding: 16 }}>
         <YStack gap="$4">
-          <Card padding="$4">
+          <Card p="$4">
             <YStack gap="$3">
               <YStack gap="$2">
-                <Text fontSize="$3" color="$colorSubtitle">
+                <Text fontSize="$3" opacity={0.7}>
                   {t('screens.details.description')}
                 </Text>
                 <Text fontSize="$4">{tracker.description || '-'}</Text>
@@ -181,7 +202,7 @@ export default function TrackerDetailsScreen() {
               <Separator />
 
               <YStack gap="$2">
-                <Text fontSize="$3" color="$colorSubtitle">
+                <Text fontSize="$3" opacity={0.7}>
                   {t('screens.details.timeSinceCreated')}
                 </Text>
                 <Text fontSize="$4">{formatTime(tracker.created_at)}</Text>
@@ -190,7 +211,7 @@ export default function TrackerDetailsScreen() {
               <Separator />
 
               <YStack gap="$2">
-                <Text fontSize="$3" color="$colorSubtitle">
+                <Text fontSize="$3" opacity={0.7}>
                   {t('screens.details.timeSinceRestart')}
                 </Text>
                 <Text fontSize="$4">{formatTime(tracker.last_restart_at)}</Text>
@@ -200,7 +221,7 @@ export default function TrackerDetailsScreen() {
                 <>
                   <Separator />
                   <YStack gap="$2">
-                    <Text fontSize="$3" color="$colorSubtitle">
+                    <Text fontSize="$3" opacity={0.7}>
                       {t('screens.details.restartCount')}
                     </Text>
                     <Text fontSize="$4">{tracker.restart_count}</Text>
@@ -211,7 +232,7 @@ export default function TrackerDetailsScreen() {
               {!premium && (
                 <>
                   <Separator />
-                  <Text fontSize="$2" color="$colorSubtitle">
+                  <Text fontSize="$2" opacity={0.7}>
                     {t('screens.details.premiumRequired')}
                   </Text>
                 </>
@@ -224,10 +245,14 @@ export default function TrackerDetailsScreen() {
             onPress={handleRestart}
             disabled={restarting}
           >
-            {restarting ? <Spinner /> : <Text>{t('screens.details.restartTracker')}</Text>}
+            {restarting ? (
+              <Spinner />
+            ) : (
+              <Text>{t('screens.details.restartTracker')}</Text>
+            )}
           </Button>
 
-          <XStack justifyContent="space-between" alignItems="center">
+          <XStack justify="space-between" items="center">
             <Text fontSize="$5" fontWeight="bold">
               {t('screens.details.observations')}
             </Text>
@@ -240,7 +265,7 @@ export default function TrackerDetailsScreen() {
           </XStack>
 
           {showAddObservation && (
-            <Card padding="$4" gap="$3">
+            <Card p="$4" gap="$3">
               <TextArea
                 value={observationText}
                 onChangeText={setObservationText}
@@ -251,37 +276,58 @@ export default function TrackerDetailsScreen() {
                 <Text>{observationImage ? 'Change Image' : 'Pick Image'}</Text>
               </Button>
               {observationImage && (
-                <Image source={{ uri: observationImage }} width="100%" height={200} borderRadius="$2" />
+                <Image
+                  source={{ uri: observationImage }}
+                  width="100%"
+                  height={200}
+                  borderRadius="$2"
+                />
               )}
               <XStack gap="$3">
-                <Button flex={1} onPress={() => setShowAddObservation(false)} variant="outlined">
+                <Button
+                  flex={1}
+                  onPress={() => setShowAddObservation(false)}
+                  variant="outlined"
+                >
                   <Text>{t('common.cancel')}</Text>
                 </Button>
                 <Button
                   flex={1}
                   onPress={handleAddObservation}
-                  disabled={addingObservation || (!observationText.trim() && !observationImage)}
+                  disabled={
+                    addingObservation ||
+                    (!observationText.trim() && !observationImage)
+                  }
                 >
-                  {addingObservation ? <Spinner /> : <Text>{t('common.save')}</Text>}
+                  {addingObservation ? (
+                    <Spinner />
+                  ) : (
+                    <Text>{t('common.save')}</Text>
+                  )}
                 </Button>
               </XStack>
             </Card>
           )}
 
           {observations.length === 0 ? (
-            <Text fontSize="$4" color="$colorSubtitle" textAlign="center" padding="$4">
+            <Text fontSize="$4" opacity={0.7} textAlign="center" p="$4">
               {t('screens.details.noObservations')}
             </Text>
           ) : (
             <YStack gap="$3">
               {observations.map((obs) => (
-                <Card key={obs.id} padding="$4">
+                <Card key={obs.id} p="$4">
                   <YStack gap="$2">
                     {obs.image_path && (
-                      <Image source={{ uri: obs.image_path }} width="100%" height={200} borderRadius="$2" />
+                      <Image
+                        source={{ uri: obs.image_path }}
+                        width="100%"
+                        height={200}
+                        borderRadius="$2"
+                      />
                     )}
                     {obs.text && <Text fontSize="$4">{obs.text}</Text>}
-                    <Text fontSize="$2" color="$colorSubtitle">
+                    <Text fontSize="$2" opacity={0.7}>
                       {new Date(obs.created_at).toLocaleString()}
                     </Text>
                   </YStack>
@@ -294,4 +340,3 @@ export default function TrackerDetailsScreen() {
     </YStack>
   );
 }
-
