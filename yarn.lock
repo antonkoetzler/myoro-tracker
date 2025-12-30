@@ -9748,6 +9748,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-in-app-purchases@npm:14.5.0":
+  version: 14.5.0
+  resolution: "expo-in-app-purchases@npm:14.5.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/66291fbc52111fe2911d651f77d25285c7909872daddc88456aea0534115d4cf81ed9bfb69936864faea171f28c835ad8c1bcf73f4f0d6200f984b88fea2b6d2
+  languageName: node
+  linkType: hard
+
 "expo-keep-awake@npm:~15.0.8":
   version: 15.0.8
   resolution: "expo-keep-awake@npm:15.0.8"
@@ -13499,6 +13508,7 @@ __metadata:
     expo-file-system: "npm:~19.0.21"
     expo-font: "npm:~14.0.10"
     expo-image-picker: "npm:~17.0.10"
+    expo-in-app-purchases: "npm:14.5.0"
     expo-linking: "npm:~8.0.11"
     expo-router: "npm:~6.0.21"
     expo-splash-screen: "npm:~31.0.13"

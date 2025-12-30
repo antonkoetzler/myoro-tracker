@@ -32,6 +32,7 @@ import {
   cycleTheme,
 } from '../../lib/theme';
 import type { ThemeMode } from '../../lib/theme';
+import { checkPremiumStatus } from '../../lib/premium';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -68,8 +69,8 @@ export default function HomeScreen() {
     } = await supabase.auth.getUser();
     setUserId(user?.id || null);
 
-    const prefs = await database.getUserPreferences(user?.id || null);
-    setPremium(prefs.premium_active);
+    const isPremium = await checkPremiumStatus(user?.id || null);
+    setPremium(isPremium);
 
     const count = await database.getTrackerCount(user?.id || null);
     setTrackerCount(count);

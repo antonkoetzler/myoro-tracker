@@ -20,9 +20,16 @@ import { ArrowLeft } from '@tamagui/lucide-icons';
 import { useToastController } from '@tamagui/toast';
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
-import { syncToCloud, syncFromCloud, deleteCloudData } from '../../lib/sync';
+import {
+  syncToCloud,
+  syncFromCloud,
+  deleteCloudData,
+  syncUserPreferencesFromCloud,
+} from '../../lib/sync';
 import i18n from '../../lib/i18n';
 import { formatCurrency } from '../../lib/currency';
+import { purchasePremium, restorePurchases } from '../../lib/purchases';
+import { checkPremiumStatus, syncPremiumFromCloud } from '../../lib/premium';
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },
@@ -57,6 +64,8 @@ export default function SettingsScreen() {
   const [premium, setPremium] = useState(false);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
   const [languageSearch, setLanguageSearch] = useState('');
 
@@ -84,9 +93,12 @@ export default function SettingsScreen() {
       setUserEmail(user?.email || null);
 
       if (user) {
+        await syncPremiumFromCloud(user.id);
+        await syncUserPreferencesFromCloud(user.id);
         const prefs = await database.getUserPreferences(user.id);
         setCloudEnabled(prefs.cloud_enabled);
-        setPremium(prefs.premium_active);
+        const isPremium = await checkPremiumStatus(user.id);
+        setPremium(isPremium);
       } else {
         const prefs = await database.getUserPreferences(null);
         setCloudEnabled(prefs.cloud_enabled);
@@ -147,10 +159,92 @@ export default function SettingsScreen() {
     });
   };
 
-  const handlePremiumSubscribe = () => {
-    toast.show('Coming soon', {
-      message: 'Premium subscription will be available soon',
-    });
+  const handlePremiumSubscribe = async () => {
+    if (purchasing) return;
+
+    try {
+      setPurchasing(true);
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        toast.show('Sign in required', {
+          message: 'Please sign in to purchase premium',
+        });
+        return;
+      }
+
+      const result = await purchasePremium();
+
+      if (result.success) {
+        await syncPremiumFromCloud(user.id);
+        const isPremium = await checkPremiumStatus(user.id);
+        setPremium(isPremium);
+        toast.show('Premium activated', {
+          message: 'Thank you for subscribing!',
+        });
+      } else {
+        toast.show('Purchase failed', {
+          message: result.error || 'Failed to complete purchase',
+        });
+      }
+    } catch (error) {
+      console.error('Error purchasing premium:', error);
+      toast.show('Error', {
+        message: 'An error occurred during purchase',
+      });
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    if (restoring) return;
+
+    try {
+      setRestoring(true);
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        toast.show('Sign in required', {
+          message: 'Please sign in to restore purchases',
+        });
+        return;
+      }
+
+      const result = await restorePurchases();
+
+      if (result.success) {
+        if (result.restored) {
+          await syncPremiumFromCloud(user.id);
+          const isPremium = await checkPremiumStatus(user.id);
+          setPremium(isPremium);
+          toast.show('Purchases restored', {
+            message: 'Your premium subscription has been restored',
+          });
+        } else {
+          toast.show('No purchases found', {
+            message: 'No previous purchases were found to restore',
+          });
+        }
+      } else {
+        toast.show('Restore failed', {
+          message: result.error || 'Failed to restore purchases',
+        });
+      }
+    } catch (error) {
+      console.error('Error restoring purchases:', error);
+      toast.show('Error', {
+        message: 'An error occurred while restoring purchases',
+      });
+    } finally {
+      setRestoring(false);
+    }
   };
 
   const premiumPrice = formatCurrency(3);
@@ -247,14 +341,44 @@ export default function SettingsScreen() {
                 {t('screens.settings.premiumDescription')}
               </Text>
               {!premium && (
-                <Button onPress={handlePremiumSubscribe}>
-                  <Text>Subscribe for {premiumPrice}/month</Text>
-                </Button>
+                <YStack gap="$3">
+                  <Button
+                    onPress={handlePremiumSubscribe}
+                    disabled={purchasing}
+                  >
+                    {purchasing ? (
+                      <Spinner />
+                    ) : (
+                      <Text>Subscribe for {premiumPrice}/month</Text>
+                    )}
+                  </Button>
+                  <Button
+                    onPress={handleRestorePurchases}
+                    disabled={restoring}
+                    variant="outlined"
+                  >
+                    {restoring ? (
+                      <Spinner />
+                    ) : (
+                      <Text>Restore Purchases</Text>
+                    )}
+                  </Button>
+                </YStack>
               )}
               {premium && (
-                <Text fontSize="$4" color="$green10">
-                  Premium Active
-                </Text>
+                <YStack gap="$2">
+                  <Text fontSize="$4" color="$green10">
+                    Premium Active
+                  </Text>
+                  <Button
+                    onPress={handleRestorePurchases}
+                    disabled={restoring}
+                    variant="outlined"
+                    size="$3"
+                  >
+                    {restoring ? <Spinner /> : <Text>Restore Purchases</Text>}
+                  </Button>
+                </YStack>
               )}
             </YStack>
           </Card>

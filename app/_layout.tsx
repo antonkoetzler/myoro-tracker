@@ -19,7 +19,9 @@ import {
   syncToCloud,
   syncFromCloud,
   setupRealtimeListeners,
+  syncUserPreferencesFromCloud,
 } from '../lib/sync';
+import { syncPremiumFromCloud } from '../lib/premium';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -75,6 +77,9 @@ export default function RootLayout() {
 
   const initializeSync = async () => {
     try {
+      await syncPremiumFromCloud(userId);
+      await syncUserPreferencesFromCloud(userId);
+
       const prefs = await database.getUserPreferences(userId);
       if (prefs.cloud_enabled) {
         await syncToCloud(userId);

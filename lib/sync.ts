@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import * as database from './database';
-import type { Tracker, Observation } from './types';
+import type { Tracker, Observation, UserPreferences } from './types';
 import * as FileSystem from 'expo-file-system';
 
 export async function syncToCloud(userId: string | null): Promise<void> {
@@ -21,6 +21,7 @@ export async function syncToCloud(userId: string | null): Promise<void> {
             user_id: userId,
             name: tracker.name,
             description: tracker.description,
+            color: tracker.color || '#3B82F6',
             created_at: tracker.created_at,
             last_restart_at: tracker.last_restart_at,
             restart_count: tracker.restart_count,
@@ -59,7 +60,7 @@ export async function syncToCloud(userId: string | null): Promise<void> {
                   encoding: FileSystem.EncodingType.Base64,
                 },
               );
-              const fileName = `${obs.id}.jpg`;
+              const fileName = `${userId}/${obs.id}.jpg`;
               const { data: uploadData, error: uploadError } =
                 await supabase.storage
                   .from('observations')
@@ -69,10 +70,10 @@ export async function syncToCloud(userId: string | null): Promise<void> {
                   });
 
               if (!uploadError && uploadData) {
-                const { data: urlData } = supabase.storage
+                const { data: urlData } = await supabase.storage
                   .from('observations')
-                  .getPublicUrl(fileName);
-                imageUrl = urlData.publicUrl;
+                  .createSignedUrl(fileName, 31536000);
+                imageUrl = urlData?.signedUrl || null;
               }
             } catch (imgError) {
               console.error('Error uploading image:', imgError);
@@ -146,6 +147,7 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
           await database.updateTracker(existing.id, {
             name: cloudTracker.name,
             description: cloudTracker.description,
+            color: cloudTracker.color || '#3B82F6',
             last_restart_at: cloudTracker.last_restart_at,
             restart_count: cloudTracker.restart_count,
             cloud_synced: true,
@@ -157,6 +159,7 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
             user_id: userId,
             name: cloudTracker.name,
             description: cloudTracker.description,
+            color: cloudTracker.color || '#3B82F6',
             created_at: cloudTracker.created_at,
             last_restart_at: cloudTracker.last_restart_at,
             restart_count: cloudTracker.restart_count,
@@ -201,22 +204,41 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
                 try {
                   const fileName = `${cloudObs.id}.jpg`;
                   const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-                  const response = await fetch(cloudObs.image_url);
+                  
+                  let signedUrl = cloudObs.image_url;
+                  
+                  if (!cloudObs.image_url.includes('?')) {
+                    const { data: urlData } = await supabase.storage
+                      .from('observations')
+                      .createSignedUrl(`${userId}/${fileName}`, 3600);
+                    signedUrl = urlData?.signedUrl || cloudObs.image_url;
+                  }
+                  
+                  const response = await fetch(signedUrl);
+                  if (!response.ok) {
+                    throw new Error(`Failed to fetch image: ${response.status}`);
+                  }
+                  
                   const blob = await response.blob();
                   const reader = new FileReader();
-                  await new Promise((resolve) => {
+                  await new Promise((resolve, reject) => {
                     reader.onloadend = async () => {
-                      const base64 = reader.result as string;
-                      await FileSystem.writeAsStringAsync(
-                        fileUri,
-                        base64.split(',')[1],
-                        {
-                          encoding: FileSystem.EncodingType.Base64,
-                        },
-                      );
-                      imagePath = fileUri;
-                      resolve(null);
+                      try {
+                        const base64 = reader.result as string;
+                        await FileSystem.writeAsStringAsync(
+                          fileUri,
+                          base64.split(',')[1],
+                          {
+                            encoding: FileSystem.EncodingType.Base64,
+                          },
+                        );
+                        imagePath = fileUri;
+                        resolve(null);
+                      } catch (error) {
+                        reject(error);
+                      }
                     };
+                    reader.onerror = reject;
                     reader.readAsDataURL(blob);
                   });
                 } catch (error) {
@@ -282,10 +304,81 @@ export function setupRealtimeListeners(
   };
 }
 
+export async function syncUserPreferencesToCloud(
+  userId: string | null,
+): Promise<void> {
+  if (!userId) return;
+
+  try {
+    const localPrefs = await database.getUserPreferences(userId);
+
+    const { error } = await supabase.from('user_preferences').upsert(
+      {
+        user_id: userId,
+        cloud_enabled: localPrefs.cloud_enabled,
+        premium_active: localPrefs.premium_active,
+        premium_expires_at: localPrefs.premium_expires_at,
+        theme: localPrefs.theme,
+      },
+      {
+        onConflict: 'user_id',
+      },
+    );
+
+    if (error) {
+      console.error('Error syncing user preferences to cloud:', error);
+    }
+  } catch (error) {
+    console.error('Error syncing user preferences to cloud:', error);
+  }
+}
+
+export async function syncUserPreferencesFromCloud(
+  userId: string | null,
+): Promise<void> {
+  if (!userId) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error syncing user preferences from cloud:', error);
+      return;
+    }
+
+    if (data) {
+      await database.updateUserPreferences(userId, {
+        cloud_enabled: data.cloud_enabled,
+        premium_active: data.premium_active,
+        premium_expires_at: data.premium_expires_at,
+        theme: (data.theme as 'light' | 'dark' | 'system') || 'system',
+      });
+    }
+  } catch (error) {
+    console.error('Error syncing user preferences from cloud:', error);
+  }
+}
+
 export async function deleteCloudData(userId: string | null): Promise<void> {
   if (!userId) return;
 
   try {
+    // Delete storage files
+    const { data: files } = await supabase.storage
+      .from('observations')
+      .list(userId);
+
+    if (files) {
+      const filePaths = files.map((file) => `${userId}/${file.name}`);
+      if (filePaths.length > 0) {
+        await supabase.storage.from('observations').remove(filePaths);
+      }
+    }
+
     // Delete observations first
     const { data: trackers } = await supabase
       .from('trackers')

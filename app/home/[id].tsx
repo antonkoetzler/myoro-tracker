@@ -21,6 +21,7 @@ import * as FileSystem from 'expo-file-system';
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
 import type { Tracker, Observation } from '../../lib/types';
+import { checkPremiumStatus } from '../../lib/premium';
 
 export default function TrackerDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -48,8 +49,8 @@ export default function TrackerDetailsScreen() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const prefs = await database.getUserPreferences(user?.id || null);
-    setPremium(prefs.premium_active);
+    const isPremium = await checkPremiumStatus(user?.id || null);
+    setPremium(isPremium);
   };
 
   const loadTracker = async () => {
