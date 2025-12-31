@@ -15,7 +15,10 @@
     "test": "jest --watchAll",
     "lint": "eslint 'app/**/*.{js,ts,jsx,tsx}' 'components/**/*.{js,ts,jsx,tsx}' '*.{js,ts,mjs,mts}'",
     "format": "prettier --write .",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "build:apk": "eas build --platform android --profile preview",
+    "build:aab": "eas build --platform android --profile production",
+    "build:ipa": "eas build --platform ios --profile production"
   },
   "jest": {
     "preset": "jest-expo"
