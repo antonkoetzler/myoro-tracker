@@ -9,7 +9,7 @@
     },
     "preview": {
       "android": {
-        "buildType": "app_bundle"
+        "buildType": "app-bundle"
       },
       "distribution": "internal"
     },
