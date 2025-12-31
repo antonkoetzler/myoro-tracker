@@ -40,7 +40,11 @@ export async function checkPremiumStatus(
         }
       }
 
-      await syncPremiumToLocal(userId, data.premium_active, data.premium_expires_at);
+      await syncPremiumToLocal(
+        userId,
+        data.premium_active,
+        data.premium_expires_at,
+      );
       return true;
     }
 
@@ -157,4 +161,3 @@ export async function syncPremiumFromCloud(
     console.error('Error syncing premium from cloud:', error);
   }
 }
-

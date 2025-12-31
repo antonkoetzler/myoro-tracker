@@ -43,18 +43,7 @@
         }
       ],
       "expo-web-browser",
-      "expo-sqlite",
-      [
-        "expo-in-app-purchases",
-        {
-          "ios": {
-            "productIds": ["premium_monthly"]
-          },
-          "android": {
-            "productIds": ["premium_monthly"]
-          }
-        }
-      ]
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true

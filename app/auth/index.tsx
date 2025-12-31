@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import type { Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Keyboard } from 'react-native';
 import {
   YStack,
   Button,
@@ -19,6 +20,28 @@ import { GoogleIcon, GitHubIcon } from '../../components/OAuthIcons';
 
 WebBrowser.maybeCompleteAuthSession();
 
+const extractErrorMessage = (
+  error: unknown,
+  t: (key: string) => string,
+): string => {
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = String(error.message);
+    // Extract user-friendly message from Supabase errors
+    if (message.includes('Invalid login credentials')) {
+      return t('errors.invalidCredentials');
+    }
+    if (message.includes('Email not confirmed')) {
+      return t('errors.emailNotConfirmed');
+    }
+    if (message.includes('User already registered')) {
+      return t('errors.userAlreadyRegistered');
+    }
+    // Return the message as-is if it's already user-friendly
+    return message;
+  }
+  return t('errors.generic');
+};
+
 export default function AuthScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -28,6 +51,7 @@ export default function AuthScreen() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const passwordInputRef = useRef<{ focus: () => void } | null>(null);
 
   const handleOAuth = async (provider: 'google' | 'github') => {
     try {
@@ -42,8 +66,8 @@ export default function AuthScreen() {
       if (error) throw error;
     } catch (error) {
       console.error('OAuth error:', error);
-      toast.show('Authentication error', {
-        message: error instanceof Error ? error.message : 'Failed to sign in',
+      toast.show(t('errors.authentication'), {
+        message: extractErrorMessage(error, t),
       });
       setLoading(null);
     }
@@ -51,15 +75,15 @@ export default function AuthScreen() {
 
   const handleEmailAuth = async () => {
     if (!email.trim() || !password.trim()) {
-      toast.show('Validation error', {
-        message: 'Please enter both email and password',
+      toast.show(t('errors.validation'), {
+        message: t('validation.enterEmailAndPassword'),
       });
       return;
     }
 
     if (password.length < 6) {
-      toast.show('Validation error', {
-        message: 'Password must be at least 6 characters',
+      toast.show(t('errors.validation'), {
+        message: t('validation.passwordMinLength'),
       });
       return;
     }
@@ -72,33 +96,49 @@ export default function AuthScreen() {
           password: password.trim(),
         });
 
-        if (error) throw error;
+        if (error) {
+          const errorMessage = extractErrorMessage(error, t);
+          toast.show(t('errors.authentication'), {
+            message: errorMessage,
+          });
+          setLoading(null);
+          return;
+        }
 
-        toast.show('Account created', {
-          message: 'Please check your email to verify your account',
+        toast.show(t('messages.accountCreated'), {
+          message: t('messages.checkEmail'),
         });
         setIsSignUp(false);
         setEmail('');
         setPassword('');
+        setLoading(null);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password: password.trim(),
         });
 
-        if (error) throw error;
+        if (error) {
+          const errorMessage = extractErrorMessage(error, t);
+          toast.show(t('errors.authentication'), {
+            message: errorMessage,
+          });
+          setLoading(null);
+          return;
+        }
 
-        toast.show('Signed in', {
-          message: 'Welcome back!',
+        toast.show(t('messages.signedIn'), {
+          message: t('messages.welcomeBack'),
         });
         router.replace('/home' as Href);
+        setLoading(null);
       }
     } catch (error) {
       console.error('Email auth error:', error);
-      toast.show('Authentication error', {
-        message: error instanceof Error ? error.message : 'Failed to authenticate',
+      const errorMessage = extractErrorMessage(error, t);
+      toast.show(t('errors.authentication'), {
+        message: errorMessage,
       });
-    } finally {
       setLoading(null);
     }
   };
@@ -115,30 +155,43 @@ export default function AuthScreen() {
       pt={insets.top}
       pb={insets.bottom}
       px="$4"
-      gap="$4"
+      gap="$3"
+      bg="$background"
     >
-      <Text fontSize="$8" fontWeight="bold" mb="$4">
+      <Text fontSize="$8" fontWeight="bold" mb="$4" color="$color">
         {t('screens.auth.title')}
       </Text>
 
       <YStack width="100%" gap="$3" mb="$2">
         <Input
-          placeholder="Email"
+          placeholder={t('placeholders.email')}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
           editable={loading === null}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            passwordInputRef.current?.focus();
+          }}
         />
         <Input
-          placeholder="Password"
+          ref={passwordInputRef}
+          placeholder={t('placeholders.password')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           autoCapitalize="none"
           autoComplete={isSignUp ? 'password-new' : 'password'}
           editable={loading === null}
+          returnKeyType="done"
+          onSubmitEditing={() => {
+            Keyboard.dismiss();
+            if (email.trim() && password.trim()) {
+              handleEmailAuth();
+            }
+          }}
         />
         <Button
           size="$4"
@@ -149,7 +202,7 @@ export default function AuthScreen() {
           {loading === 'email' ? (
             <Spinner />
           ) : (
-            <Text>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
+            <Text>{isSignUp ? t('buttons.signUp') : t('buttons.signIn')}</Text>
           )}
         </Button>
         <Button
@@ -164,8 +217,8 @@ export default function AuthScreen() {
         >
           <Text fontSize="$3">
             {isSignUp
-              ? 'Already have an account? Sign In'
-              : "Don't have an account? Sign Up"}
+              ? t('buttons.alreadyHaveAccount')
+              : t('buttons.dontHaveAccount')}
           </Text>
         </Button>
       </YStack>
@@ -173,7 +226,7 @@ export default function AuthScreen() {
       <XStack items="center" gap="$3" width="100%" my="$2">
         <Separator flex={1} />
         <Text fontSize="$3" opacity={0.7}>
-          OR
+          {t('common.or')}
         </Text>
         <Separator flex={1} />
       </XStack>
@@ -204,7 +257,9 @@ export default function AuthScreen() {
           <Spinner />
         ) : (
           <XStack items="center" gap="$2">
-            <GitHubIcon size={20} />
+            <YStack color="$color">
+              <GitHubIcon size={20} />
+            </YStack>
             <Text>{t('screens.auth.signInWithGitHub')}</Text>
           </XStack>
         )}

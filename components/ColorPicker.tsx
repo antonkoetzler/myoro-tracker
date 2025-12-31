@@ -1,5 +1,7 @@
-import { Modal, YStack, XStack, Button, Text } from 'tamagui';
+import { YStack, XStack, Button, Text } from 'tamagui';
 import { Check } from '@tamagui/lucide-icons';
+import { useTranslation } from 'react-i18next';
+import { Modal, Pressable } from 'react-native';
 
 const PRESET_COLORS = [
   '#3B82F6', // Blue
@@ -29,49 +31,63 @@ export function ColorPicker({
   selectedColor,
   onColorSelect,
 }: ColorPickerProps) {
+  const { t } = useTranslation();
   return (
     <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      animation="medium"
-      snapPoints={[50]}
+      visible={open}
+      transparent
+      animationType="slide"
+      onRequestClose={() => onOpenChange(false)}
     >
-      <Modal.Overlay />
-      <Modal.Content maxWidth={400} bg="$background">
-        <Modal.Header>
-          <Text fontSize="$6" fontWeight="bold">
-            Choose Color
-          </Text>
-        </Modal.Header>
-        <Modal.ScrollView>
-          <YStack p="$4" gap="$3">
-            <XStack flexWrap="wrap" gap="$3" justify="center">
-              {PRESET_COLORS.map((color) => (
-                <Button
-                  key={color}
-                  circular
-                  size="$5"
-                  bg={color}
-                  borderWidth={selectedColor === color ? 3 : 0}
-                  borderColor="$color"
-                  onPress={() => {
-                    onColorSelect(color);
-                    onOpenChange(false);
-                  }}
-                  pressStyle={{ scale: 0.9 }}
-                >
-                  {selectedColor === color && <Check size={20} color="white" />}
-                </Button>
-              ))}
-            </XStack>
+      <Pressable
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+        }}
+        onPress={() => onOpenChange(false)}
+      >
+        <Pressable onPress={(e) => e.stopPropagation()}>
+          <YStack
+            bg="$background"
+            borderTopLeftRadius="$4"
+            borderTopRightRadius="$4"
+            p="$4"
+            gap="$4"
+            maxHeight="50%"
+          >
+            <Text fontSize="$6" fontWeight="bold">
+              {t('buttons.chooseColor')}
+            </Text>
+            <YStack gap="$3">
+              <XStack flexWrap="wrap" gap="$3" justify="center">
+                {PRESET_COLORS.map((color) => (
+                  <Button
+                    key={color}
+                    circular
+                    size="$5"
+                    bg={color}
+                    borderWidth={selectedColor === color ? 3 : 0}
+                    borderColor="$color"
+                    onPress={() => {
+                      onColorSelect(color);
+                      onOpenChange(false);
+                    }}
+                    pressStyle={{ scale: 0.9 }}
+                  >
+                    {selectedColor === color && (
+                      <Check size={20} color="white" />
+                    )}
+                  </Button>
+                ))}
+              </XStack>
+            </YStack>
+            <Button onPress={() => onOpenChange(false)}>
+              <Text>{t('common.cancel')}</Text>
+            </Button>
           </YStack>
-        </Modal.ScrollView>
-        <Modal.Footer>
-          <Button onPress={() => onOpenChange(false)}>
-            <Text>Cancel</Text>
-          </Button>
-        </Modal.Footer>
-      </Modal.Content>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

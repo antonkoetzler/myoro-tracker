@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  useSafeAreaInsets,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 import {
   YStack,
   Button,
@@ -15,6 +18,7 @@ import { ArrowLeft } from '@tamagui/lucide-icons';
 import { useToastController } from '@tamagui/toast';
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
+import { syncToCloud } from '../../lib/sync';
 import { ColorPicker } from '../../components/ColorPicker';
 
 export default function CreateTrackerScreen() {
@@ -27,10 +31,21 @@ export default function CreateTrackerScreen() {
   const [color, setColor] = useState('#3B82F6');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const nameInputRef = useRef<Input>(null);
+
+  useEffect(() => {
+    // Focus the name input when the screen loads
+    const timer = setTimeout(() => {
+      nameInputRef.current?.focus();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      toast.show('Error', { message: 'Name is required' });
+      toast.show(t('messages.error'), {
+        message: t('validation.nameRequired'),
+      });
       return;
     }
 
@@ -50,8 +65,9 @@ export default function CreateTrackerScreen() {
         return;
       }
 
+      const userId = user?.id || null;
       await database.createTracker({
-        user_id: user?.id || null,
+        user_id: userId,
         name: name.trim(),
         description: description.trim(),
         color,
@@ -60,11 +76,24 @@ export default function CreateTrackerScreen() {
         restart_count: 0,
       });
 
-      toast.show('Success', { message: 'Tracker created successfully' });
+      // Sync to cloud if user is logged in
+      if (user?.id) {
+        try {
+          await syncToCloud(user.id);
+        } catch (error) {
+          console.error('Error syncing to cloud:', error);
+        }
+      }
+
+      toast.show(t('messages.success'), {
+        message: t('messages.trackerCreatedSuccessfully'),
+      });
       router.back();
     } catch (error) {
       console.error('Error creating tracker:', error);
-      toast.show('Error', { message: 'Failed to create tracker' });
+      toast.show(t('messages.error'), {
+        message: t('errors.failedToCreateTracker'),
+      });
     } finally {
       setLoading(false);
     }
@@ -93,48 +122,54 @@ export default function CreateTrackerScreen() {
         </Text>
       </XStack>
 
-      <YStack flex={1} p="$4" gap="$4">
-        <YStack gap="$3">
-          <YStack gap="$2">
-            <Text>{t('screens.details.name')}</Text>
-            <XStack gap="$2" items="center">
-              <Button
-                size="$4"
-                circular
-                bg={color}
-                borderWidth={2}
-                borderColor="$borderColor"
-                onPress={() => setShowColorPicker(true)}
-                pressStyle={{ scale: 0.9 }}
-              />
-              <Input
+      <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+        <YStack flex={1} p="$4" gap="$4">
+          <YStack gap="$3" flex={1}>
+            <YStack gap="$2">
+              <Text>{t('screens.details.name')}</Text>
+              <XStack gap="$2" items="center">
+                <Button
+                  size="$4"
+                  circular
+                  bg={color as `#${string}`}
+                  borderWidth={2}
+                  borderColor="$borderColor"
+                  onPress={() => setShowColorPicker(true)}
+                  pressStyle={{ scale: 0.9 }}
+                />
+                <Input
+                  ref={nameInputRef}
+                  flex={1}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder={t('screens.details.name')}
+                  borderColor={!name.trim() ? '$red8' : '$borderColor'}
+                />
+              </XStack>
+              {!name.trim() && (
+                <Text fontSize="$2" color="$red10">
+                  {t('validation.nameRequired')}
+                </Text>
+              )}
+            </YStack>
+
+            <YStack gap="$2" flex={1}>
+              <Text>{t('screens.details.description')}</Text>
+              <TextArea
                 flex={1}
-                value={name}
-                onChangeText={setName}
-                placeholder={t('screens.details.name')}
+                value={description}
+                onChangeText={setDescription}
+                placeholder={t('screens.details.description')}
+                height={100}
               />
-            </XStack>
+            </YStack>
           </YStack>
 
-          <YStack gap="$2">
-            <Text>{t('screens.details.description')}</Text>
-            <TextArea
-              value={description}
-              onChangeText={setDescription}
-              placeholder={t('screens.details.description')}
-              minHeight={100}
-            />
-          </YStack>
+          <Button onPress={handleCreate} disabled={loading || !name.trim()}>
+            {loading ? <Spinner /> : <Text>{t('common.save')}</Text>}
+          </Button>
         </YStack>
-
-        <Button
-          onPress={handleCreate}
-          disabled={loading || !name.trim()}
-          mt="auto"
-        >
-          {loading ? <Spinner /> : <Text>{t('common.save')}</Text>}
-        </Button>
-      </YStack>
+      </SafeAreaView>
 
       <ColorPicker
         open={showColorPicker}

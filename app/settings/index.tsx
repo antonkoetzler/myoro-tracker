@@ -11,7 +11,6 @@ import {
   ScrollView,
   Card,
   Separator,
-  Switch,
   Select,
   Spinner,
   Input,
@@ -20,12 +19,7 @@ import { ArrowLeft } from '@tamagui/lucide-icons';
 import { useToastController } from '@tamagui/toast';
 import { supabase } from '../../lib/supabase';
 import * as database from '../../lib/database';
-import {
-  syncToCloud,
-  syncFromCloud,
-  deleteCloudData,
-  syncUserPreferencesFromCloud,
-} from '../../lib/sync';
+import { syncUserPreferencesFromCloud } from '../../lib/sync';
 import i18n from '../../lib/i18n';
 import { formatCurrency } from '../../lib/currency';
 import { purchasePremium, restorePurchases } from '../../lib/purchases';
@@ -60,10 +54,8 @@ export default function SettingsScreen() {
   const toast = useToastController();
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [cloudEnabled, setCloudEnabled] = useState(false);
   const [premium, setPremium] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
@@ -95,13 +87,10 @@ export default function SettingsScreen() {
       if (user) {
         await syncPremiumFromCloud(user.id);
         await syncUserPreferencesFromCloud(user.id);
-        const prefs = await database.getUserPreferences(user.id);
-        setCloudEnabled(prefs.cloud_enabled);
         const isPremium = await checkPremiumStatus(user.id);
         setPremium(isPremium);
       } else {
         const prefs = await database.getUserPreferences(null);
-        setCloudEnabled(prefs.cloud_enabled);
         setPremium(prefs.premium_active);
       }
     } catch (error) {
@@ -111,51 +100,11 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleCloudToggle = async (enabled: boolean) => {
-    try {
-      setSyncing(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (enabled) {
-        await database.updateUserPreferences(user?.id || null, {
-          cloud_enabled: true,
-        });
-        await syncToCloud(user?.id || null);
-        await syncFromCloud(user?.id || null);
-        setCloudEnabled(true);
-        toast.show('Cloud storage enabled', {
-          message: 'Your trackers are now syncing to the cloud',
-        });
-      } else {
-        const shouldOffload = confirm(t('screens.settings.offloadData'));
-        await database.updateUserPreferences(user?.id || null, {
-          cloud_enabled: false,
-        });
-        await deleteCloudData(user?.id || null);
-        setCloudEnabled(false);
-        toast.show('Cloud storage disabled', {
-          message: shouldOffload
-            ? 'Data offloaded to device'
-            : 'Cloud data deleted',
-        });
-      }
-    } catch (error) {
-      console.error('Error toggling cloud:', error);
-      toast.show('Error', {
-        message: 'Failed to update cloud storage settings',
-      });
-    } finally {
-      setSyncing(false);
-    }
-  };
-
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
     setCurrentLanguage(lang);
-    toast.show('Language changed', {
-      message: `Language set to ${LANGUAGES.find((l) => l.value === lang)?.label || lang}`,
+    toast.show(t('messages.languageChanged'), {
+      message: `${t('messages.languageSetTo')} ${LANGUAGES.find((l) => l.value === lang)?.label || lang}`,
     });
   };
 
@@ -170,8 +119,8 @@ export default function SettingsScreen() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        toast.show('Sign in required', {
-          message: 'Please sign in to purchase premium',
+        toast.show(t('messages.signInRequired'), {
+          message: t('messages.pleaseSignInToPurchasePremium'),
         });
         return;
       }
@@ -182,18 +131,18 @@ export default function SettingsScreen() {
         await syncPremiumFromCloud(user.id);
         const isPremium = await checkPremiumStatus(user.id);
         setPremium(isPremium);
-        toast.show('Premium activated', {
-          message: 'Thank you for subscribing!',
+        toast.show(t('messages.premiumActivated'), {
+          message: t('messages.thankYouForSubscribing'),
         });
       } else {
-        toast.show('Purchase failed', {
-          message: result.error || 'Failed to complete purchase',
+        toast.show(t('messages.purchaseFailed'), {
+          message: result.error || t('errors.failedToCompletePurchase'),
         });
       }
     } catch (error) {
       console.error('Error purchasing premium:', error);
-      toast.show('Error', {
-        message: 'An error occurred during purchase',
+      toast.show(t('messages.error'), {
+        message: t('messages.anErrorOccurredDuringPurchase'),
       });
     } finally {
       setPurchasing(false);
@@ -211,8 +160,8 @@ export default function SettingsScreen() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        toast.show('Sign in required', {
-          message: 'Please sign in to restore purchases',
+        toast.show(t('messages.signInRequired'), {
+          message: t('messages.pleaseSignInToRestorePurchases'),
         });
         return;
       }
@@ -224,23 +173,23 @@ export default function SettingsScreen() {
           await syncPremiumFromCloud(user.id);
           const isPremium = await checkPremiumStatus(user.id);
           setPremium(isPremium);
-          toast.show('Purchases restored', {
-            message: 'Your premium subscription has been restored',
+          toast.show(t('messages.purchasesRestored'), {
+            message: t('messages.yourPremiumSubscriptionHasBeenRestored'),
           });
         } else {
-          toast.show('No purchases found', {
-            message: 'No previous purchases were found to restore',
+          toast.show(t('messages.noPurchasesFound'), {
+            message: t('messages.noPreviousPurchasesWereFoundToRestore'),
           });
         }
       } else {
-        toast.show('Restore failed', {
-          message: result.error || 'Failed to restore purchases',
+        toast.show(t('messages.restoreFailed'), {
+          message: result.error || t('errors.failedToRestorePurchases'),
         });
       }
     } catch (error) {
       console.error('Error restoring purchases:', error);
-      toast.show('Error', {
-        message: 'An error occurred while restoring purchases',
+      toast.show(t('messages.error'), {
+        message: t('messages.anErrorOccurredWhileRestoringPurchases'),
       });
     } finally {
       setRestoring(false);
@@ -305,34 +254,6 @@ export default function SettingsScreen() {
 
           <Card p="$4">
             <YStack gap="$3">
-              <XStack justify="space-between" items="center">
-                <YStack flex={1}>
-                  <Text fontSize="$5" fontWeight="bold">
-                    {t('screens.settings.cloudStorage')}
-                  </Text>
-                  <Text fontSize="$3" opacity={0.7}>
-                    {t('screens.settings.cloudStorageDescription')}
-                  </Text>
-                </YStack>
-                <Switch
-                  checked={cloudEnabled}
-                  onCheckedChange={handleCloudToggle}
-                  disabled={syncing || !premium}
-                >
-                  <Switch.Thumb animation="quick" />
-                </Switch>
-              </XStack>
-              {!premium && (
-                <Text fontSize="$2" opacity={0.7}>
-                  {t('screens.details.premiumRequired')}
-                </Text>
-              )}
-              {syncing && <Spinner size="small" />}
-            </YStack>
-          </Card>
-
-          <Card p="$4">
-            <YStack gap="$3">
               <Text fontSize="$5" fontWeight="bold">
                 {t('screens.settings.premium')}
               </Text>
@@ -360,7 +281,7 @@ export default function SettingsScreen() {
                     {restoring ? (
                       <Spinner />
                     ) : (
-                      <Text>Restore Purchases</Text>
+                      <Text>{t('buttons.restorePurchases')}</Text>
                     )}
                   </Button>
                 </YStack>
@@ -376,7 +297,11 @@ export default function SettingsScreen() {
                     variant="outlined"
                     size="$3"
                   >
-                    {restoring ? <Spinner /> : <Text>Restore Purchases</Text>}
+                    {restoring ? (
+                      <Spinner />
+                    ) : (
+                      <Text>{t('buttons.restorePurchases')}</Text>
+                    )}
                   </Button>
                 </YStack>
               )}

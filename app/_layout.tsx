@@ -3,7 +3,7 @@ import '../tamagui.config';
 import '../lib/i18n';
 
 import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, LogBox } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   DarkTheme,
@@ -22,6 +22,7 @@ import {
   syncUserPreferencesFromCloud,
 } from '../lib/sync';
 import { syncPremiumFromCloud } from '../lib/premium';
+import { getThemePreference, type ThemeMode } from '../lib/theme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -35,6 +36,12 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+// Suppress default error toasts - we handle errors ourselves
+LogBox.ignoreAllLogs(false);
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
+
 /**
  * RootLayout component for the app.
  */
@@ -47,8 +54,31 @@ export default function RootLayout() {
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
   const [userId, setUserId] = useState<string | null>(null);
+  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
 
-  const isDark = colorScheme === 'dark';
+  useEffect(() => {
+    const loadTheme = async () => {
+      const theme = await getThemePreference();
+      setThemeMode(theme);
+    };
+    loadTheme();
+
+    const interval = setInterval(async () => {
+      const theme = await getThemePreference();
+      setThemeMode((prev) => (prev !== theme ? theme : prev));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getActiveTheme = (): 'light' | 'dark' => {
+    if (themeMode === 'system') {
+      return colorScheme === 'dark' ? 'dark' : 'light';
+    }
+    return themeMode;
+  };
+
+  const isDark = getActiveTheme() === 'dark';
 
   useEffect(() => {
     database.initDatabase();

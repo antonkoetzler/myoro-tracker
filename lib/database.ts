@@ -78,10 +78,17 @@ export async function getAllTrackers(
   userId: string | null,
 ): Promise<Tracker[]> {
   const database = await getDatabase();
-  const result = await database.getAllAsync<Tracker>(
-    'SELECT * FROM trackers WHERE user_id = ? ORDER BY created_at DESC',
-    [userId],
-  );
+  let result: Tracker[];
+  if (userId === null) {
+    result = await database.getAllAsync<Tracker>(
+      'SELECT * FROM trackers WHERE user_id IS NULL ORDER BY created_at DESC',
+    );
+  } else {
+    result = await database.getAllAsync<Tracker>(
+      'SELECT * FROM trackers WHERE user_id = ? ORDER BY created_at DESC',
+      [userId],
+    );
+  }
   return result;
 }
 
@@ -279,7 +286,7 @@ export async function getUserPreferences(
 
   return {
     ...result,
-    cloud_enabled: Boolean(result.cloud_enabled),
+    cloud_enabled: false, // Always false, not used in business logic
     premium_active: Boolean(result.premium_active),
     theme: (result.theme as 'light' | 'dark' | 'system') || 'system',
   };
@@ -293,10 +300,7 @@ export async function updateUserPreferences(
   const fields: string[] = [];
   const values: unknown[] = [];
 
-  if (updates.cloud_enabled !== undefined) {
-    fields.push('cloud_enabled = ?');
-    values.push(updates.cloud_enabled ? 1 : 0);
-  }
+  // cloud_enabled removed from business logic - always sync if user logged in
   if (updates.premium_active !== undefined) {
     fields.push('premium_active = ?');
     values.push(updates.premium_active ? 1 : 0);
@@ -321,9 +325,16 @@ export async function updateUserPreferences(
 
 export async function getTrackerCount(userId: string | null): Promise<number> {
   const database = await getDatabase();
-  const result = await database.getFirstAsync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM trackers WHERE user_id = ?',
-    [userId],
-  );
+  let result: { count: number } | null;
+  if (userId === null) {
+    result = await database.getFirstAsync<{ count: number }>(
+      'SELECT COUNT(*) as count FROM trackers WHERE user_id IS NULL',
+    );
+  } else {
+    result = await database.getFirstAsync<{ count: number }>(
+      'SELECT COUNT(*) as count FROM trackers WHERE user_id = ?',
+      [userId],
+    );
+  }
   return result?.count || 0;
 }

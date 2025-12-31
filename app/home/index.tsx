@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useFocusEffect } from 'expo-router';
 import type { Href } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -47,16 +47,33 @@ export default function HomeScreen() {
   const [trackerCount, setTrackerCount] = useState(0);
   const [themeMode, setThemeMode] = useState<ThemeMode>('system');
 
+  const loadTrackers = useCallback(async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const userId = user?.id || null;
+      const userTrackers = await database.getAllTrackers(userId);
+      setTrackers(userTrackers);
+    } catch (error) {
+      console.error('Error loading trackers:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     database.initDatabase();
     loadTrackers();
     checkAuth();
     loadTheme();
-  }, []);
+  }, [loadTrackers]);
 
-  useFocusEffect(() => {
-    loadTrackers();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      loadTrackers();
+    }, [loadTrackers]),
+  );
 
   const loadTheme = async () => {
     const theme = await getThemePreference();
@@ -74,20 +91,6 @@ export default function HomeScreen() {
 
     const count = await database.getTrackerCount(user?.id || null);
     setTrackerCount(count);
-  };
-
-  const loadTrackers = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const userTrackers = await database.getAllTrackers(user?.id || null);
-      setTrackers(userTrackers);
-    } catch (error) {
-      console.error('Error loading trackers:', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleCreateTracker = async () => {
@@ -108,7 +111,9 @@ export default function HomeScreen() {
     await supabase.auth.signOut();
     setUserId(null);
     setShowMenu(false);
-    toast.show('Logged out', { message: 'You have been logged out' });
+    toast.show(t('messages.loggedOut'), {
+      message: t('messages.youHaveBeenLoggedOut'),
+    });
     router.replace('/auth' as Href);
   };
 
@@ -117,15 +122,15 @@ export default function HomeScreen() {
     await setThemePreference(newTheme);
     setThemeMode(newTheme);
     setShowMenu(false);
-    toast.show('Theme changed', {
-      message: `Theme set to ${newTheme === 'system' ? 'system default' : newTheme}`,
+    toast.show(t('messages.themeChanged'), {
+      message: `${t('messages.themeSetTo')} ${newTheme === 'system' ? t('messages.systemDefault') : t(`common.${newTheme}`)}`,
+      duration: 2000,
     });
-    // Note: Actual theme change requires app restart or context update
   };
 
   const getThemeLabel = () => {
-    if (themeMode === 'system') return 'System';
-    return themeMode === 'dark' ? 'Dark' : 'Light';
+    if (themeMode === 'system') return t('common.system');
+    return themeMode === 'dark' ? t('common.dark') : t('common.light');
   };
 
   const getThemeIcon = () => {
@@ -209,7 +214,7 @@ export default function HomeScreen() {
                 onPress={handleThemeToggle}
                 size="$3"
               >
-                Change to {getThemeLabel()}
+                {t('buttons.changeTo') + ' ' + getThemeLabel()}
               </Button>
               <Button
                 icon={Settings}
@@ -232,6 +237,7 @@ export default function HomeScreen() {
                 </Button>
               ) : (
                 <Button
+                  icon={LogOut}
                   onPress={() => {
                     router.push('/auth' as Href);
                     setShowMenu(false);
@@ -239,7 +245,7 @@ export default function HomeScreen() {
                   variant="outlined"
                   size="$3"
                 >
-                  {t('screens.auth.title')}
+                  {t('common.logout')}
                 </Button>
               )}
             </YStack>

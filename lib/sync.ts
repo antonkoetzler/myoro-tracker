@@ -6,9 +6,6 @@ import * as FileSystem from 'expo-file-system';
 export async function syncToCloud(userId: string | null): Promise<void> {
   if (!userId) return;
 
-  const prefs = await database.getUserPreferences(userId);
-  if (!prefs.cloud_enabled) return;
-
   // Sync trackers
   const trackers = await database.getAllTrackers(userId);
   for (const tracker of trackers) {
@@ -122,9 +119,6 @@ function decode(base64: string): Uint8Array {
 export async function syncFromCloud(userId: string | null): Promise<void> {
   if (!userId) return;
 
-  const prefs = await database.getUserPreferences(userId);
-  if (!prefs.cloud_enabled) return;
-
   try {
     // Fetch trackers from Supabase
     const { data: trackers, error: trackersError } = await supabase
@@ -204,21 +198,23 @@ export async function syncFromCloud(userId: string | null): Promise<void> {
                 try {
                   const fileName = `${cloudObs.id}.jpg`;
                   const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-                  
+
                   let signedUrl = cloudObs.image_url;
-                  
+
                   if (!cloudObs.image_url.includes('?')) {
                     const { data: urlData } = await supabase.storage
                       .from('observations')
                       .createSignedUrl(`${userId}/${fileName}`, 3600);
                     signedUrl = urlData?.signedUrl || cloudObs.image_url;
                   }
-                  
+
                   const response = await fetch(signedUrl);
                   if (!response.ok) {
-                    throw new Error(`Failed to fetch image: ${response.status}`);
+                    throw new Error(
+                      `Failed to fetch image: ${response.status}`,
+                    );
                   }
-                  
+
                   const blob = await response.blob();
                   const reader = new FileReader();
                   await new Promise((resolve, reject) => {
@@ -315,7 +311,6 @@ export async function syncUserPreferencesToCloud(
     const { error } = await supabase.from('user_preferences').upsert(
       {
         user_id: userId,
-        cloud_enabled: localPrefs.cloud_enabled,
         premium_active: localPrefs.premium_active,
         premium_expires_at: localPrefs.premium_expires_at,
         theme: localPrefs.theme,
@@ -352,7 +347,6 @@ export async function syncUserPreferencesFromCloud(
 
     if (data) {
       await database.updateUserPreferences(userId, {
-        cloud_enabled: data.cloud_enabled,
         premium_active: data.premium_active,
         premium_expires_at: data.premium_expires_at,
         theme: (data.theme as 'light' | 'dark' | 'system') || 'system',

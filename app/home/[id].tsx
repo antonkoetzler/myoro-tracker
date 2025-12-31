@@ -38,12 +38,21 @@ export default function TrackerDetailsScreen() {
   const [observationImage, setObservationImage] = useState<string | null>(null);
   const [addingObservation, setAddingObservation] = useState(false);
   const [premium, setPremium] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     loadTracker();
     loadObservations();
     checkPremium();
   }, [id]);
+
+  // Update time every second to refresh the displayed time
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const checkPremium = async () => {
     const {
@@ -85,10 +94,14 @@ export default function TrackerDetailsScreen() {
         restart_count: tracker.restart_count + 1,
       });
       await loadTracker();
-      toast.show('Tracker restarted', { message: 'Timer has been reset' });
+      toast.show(t('messages.trackerRestarted'), {
+        message: t('messages.timerHasBeenReset'),
+      });
     } catch (error) {
       console.error('Error restarting tracker:', error);
-      toast.show('Error', { message: 'Failed to restart tracker' });
+      toast.show(t('messages.error'), {
+        message: t('errors.failedToRestartTracker'),
+      });
     } finally {
       setRestarting(false);
     }
@@ -113,7 +126,16 @@ export default function TrackerDetailsScreen() {
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
       const fileName = `${Date.now()}.jpg`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+      const documentDir = (
+        FileSystem as unknown as {
+          documentDirectory: string | null;
+        }
+      ).documentDirectory;
+      if (!documentDir) {
+        toast.show('Error', { message: 'Unable to access file system' });
+        return;
+      }
+      const fileUri = `${documentDir}${fileName}`;
 
       await FileSystem.copyAsync({
         from: asset.uri,
@@ -133,18 +155,21 @@ export default function TrackerDetailsScreen() {
         tracker_id: tracker.id,
         text: observationText.trim(),
         image_path: observationImage,
+        created_at: new Date().toISOString(),
       });
 
       setObservationText('');
       setObservationImage(null);
       setShowAddObservation(false);
       await loadObservations();
-      toast.show('Observation added', {
-        message: 'Your observation has been saved',
+      toast.show(t('messages.observationAdded'), {
+        message: t('messages.yourObservationHasBeenSaved'),
       });
     } catch (error) {
       console.error('Error adding observation:', error);
-      toast.show('Error', { message: 'Failed to add observation' });
+      toast.show(t('messages.error'), {
+        message: t('errors.failedToAddObservation'),
+      });
     } finally {
       setAddingObservation(false);
     }
@@ -152,15 +177,27 @@ export default function TrackerDetailsScreen() {
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const diff = currentTime.getTime() - date.getTime();
 
-    if (days > 0) return `${days}d ${hours}h`;
-    if (hours > 0) return `${hours}h ${minutes}m`;
-    return `${minutes}m`;
+    // If diff is negative or zero, show 0s
+    if (diff <= 0) {
+      return '0s';
+    }
+
+    const seconds = Math.floor((diff / 1000) % 60);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365);
+    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years}y`);
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (seconds > 0 || parts.length === 0) parts.push(`${seconds}s`);
+
+    return parts.join(' ');
   };
 
   if (loading) {
@@ -202,7 +239,7 @@ export default function TrackerDetailsScreen() {
           <YStack
             width={4}
             height={24}
-            bg={tracker.color || '#3B82F6'}
+            bg={(tracker.color || '#3B82F6') as `#${string}`}
             rounded="$2"
           />
           <Text fontSize="$6" fontWeight="bold" flex={1}>
@@ -211,7 +248,7 @@ export default function TrackerDetailsScreen() {
         </XStack>
       </XStack>
 
-      <ScrollView flex={1} contentContainerStyle={{ padding: 16 }}>
+      <ScrollView flex={1} p="$4">
         <YStack gap="$4">
           <Card p="$4">
             <YStack gap="$3">
@@ -293,10 +330,14 @@ export default function TrackerDetailsScreen() {
                 value={observationText}
                 onChangeText={setObservationText}
                 placeholder={t('screens.details.addObservation')}
-                minHeight={100}
+                height={100}
               />
               <Button onPress={handlePickImage} variant="outlined">
-                <Text>{observationImage ? 'Change Image' : 'Pick Image'}</Text>
+                <Text>
+                  {observationImage
+                    ? t('buttons.changeImage')
+                    : t('buttons.pickImage')}
+                </Text>
               </Button>
               {observationImage && (
                 <Image
@@ -333,9 +374,11 @@ export default function TrackerDetailsScreen() {
           )}
 
           {observations.length === 0 ? (
-            <Text fontSize="$4" opacity={0.7} textAlign="center" p="$4">
-              {t('screens.details.noObservations')}
-            </Text>
+            <YStack items="center" p="$4">
+              <Text fontSize="$4" opacity={0.7}>
+                {t('screens.details.noObservations')}
+              </Text>
+            </YStack>
           ) : (
             <YStack gap="$3">
               {observations.map((obs) => (
