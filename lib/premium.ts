@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import * as database from './database';
-import type { InAppPurchase } from 'expo-in-app-purchases';
+// import type { InAppPurchase } from 'expo-in-app-purchases';
 
 const PREMIUM_DURATION_DAYS = 30;
 
@@ -59,7 +59,7 @@ export async function checkPremiumStatus(
 
 export async function activatePremium(
   userId: string,
-  purchase: InAppPurchase,
+  // purchase: InAppPurchase,
 ): Promise<void> {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + PREMIUM_DURATION_DAYS);
@@ -122,42 +122,5 @@ async function syncPremiumToLocal(
     });
   } catch (error) {
     console.error('Error syncing premium to local:', error);
-  }
-}
-
-export async function syncPremiumFromCloud(
-  userId: string | null,
-): Promise<void> {
-  if (!userId) return;
-
-  try {
-    const { data, error } = await supabase
-      .from('user_preferences')
-      .select('premium_active, premium_expires_at')
-      .eq('user_id', userId)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error syncing premium from cloud:', error);
-      return;
-    }
-
-    if (data) {
-      let premiumActive = data.premium_active;
-
-      if (premiumActive && data.premium_expires_at) {
-        const expiresAt = new Date(data.premium_expires_at);
-        const now = new Date();
-
-        if (expiresAt < now) {
-          premiumActive = false;
-          await deactivatePremium(userId);
-        }
-      }
-
-      await syncPremiumToLocal(userId, premiumActive, data.premium_expires_at);
-    }
-  } catch (error) {
-    console.error('Error syncing premium from cloud:', error);
   }
 }
